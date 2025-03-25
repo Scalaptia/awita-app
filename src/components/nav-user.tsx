@@ -1,6 +1,4 @@
 import {
-    BellIcon,
-    CreditCardIcon,
     LogInIcon,
     LogOutIcon,
     MoreVerticalIcon,
@@ -27,12 +25,14 @@ import {
     SidebarMenuItem,
     useSidebar,
   } from "@/components/ui/sidebar"
-  import { Button } from "@/components/ui/button"
+  import { useTheme } from "@/components/theme-provider"
+import { ModeToggle } from "./ui/theme-toggler"
   
   export function NavUser() {
     const { isMobile } = useSidebar()
     const { user, isLoaded: userLoaded } = useUser()
     const { signOut, openSignIn } = useClerk()
+    const { setTheme } = useTheme()
   
     // Show login button if user is not logged in
     if (!user && userLoaded) {
@@ -101,13 +101,15 @@ import {
               <DropdownMenuGroup>
                 <DropdownMenuItem onClick={() => window.location.href = '/user'}>
                   <UserCircleIcon className="mr-2 h-4 w-4" />
-                  Account
+                  Cuenta
                 </DropdownMenuItem>
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
+              <ModeToggle />
+              <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => signOut()}>
                 <LogOutIcon className="mr-2 h-4 w-4" />
-                Log out
+                    Cerrar sesión
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

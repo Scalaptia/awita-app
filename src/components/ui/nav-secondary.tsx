@@ -4,7 +4,6 @@ import {
   SidebarGroup,
   SidebarGroupContent,
   SidebarMenu,
-  SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 export function NavSecondary({
@@ -13,7 +12,7 @@ export function NavSecondary({
 }: {
   items: {
     title: string
-    url: string
+    bg?: string
     icon: LucideIcon
   }[]
 } & React.ComponentPropsWithoutRef<typeof SidebarGroup>) {
@@ -23,12 +22,10 @@ export function NavSecondary({
         <SidebarMenu>
           {items.map((item) => (
             <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton asChild>
-                <a href={item.url}>
-                  <item.icon />
-                  <span>{item.title}</span>
-                </a>
-              </SidebarMenuButton>
+              <div className={`flex items-center gap-2 p-2 rounded-md ${item.bg || "bg-sidebar-secondary"}`}>
+                <item.icon />
+                <span>{item.title}</span>
+              </div>
             </SidebarMenuItem>
           ))}
         </SidebarMenu>

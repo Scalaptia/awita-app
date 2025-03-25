@@ -3,7 +3,7 @@ import {
   BellIcon,
   CircleCheckIcon,
   DropletIcon,
-  GaugeIcon,
+  RadioIcon,
   LayoutDashboardIcon,
 } from "lucide-react"
 
@@ -19,6 +19,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
+import { Link } from "react-router"
 
 const data = {
   navMain: [
@@ -35,13 +36,13 @@ const data = {
     {
         title: "Sensores",
         url: "/sensors",
-        icon: GaugeIcon
+        icon: RadioIcon
     }
   ],
   navSecondary: [
     {
-      title: "Status",
-      url: "#",
+      title: "Sistema funcional",
+      bg: "bg-green-500",
       icon: CircleCheckIcon,
     },
   ],
@@ -53,15 +54,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton
-              asChild
-              className="data-[slot=sidebar-menu-button]:!p-1.5"
-            >
-              <a href="#">
-                <DropletIcon className="h-5 w-5" />
-                <span className="text-base font-semibold">AWITA</span>
-              </a>
-            </SidebarMenuButton>
+            <Link to="/" className="flex items-center gap-2 p-2">
+                <img src="/logo.svg" alt="Logo" />
+            </Link>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
