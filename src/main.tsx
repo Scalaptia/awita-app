@@ -1,15 +1,15 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import { BrowserRouter, Routes, Route } from "react-router";
+import { BrowserRouter, Routes, Route } from 'react-router'
 import { ClerkProvider } from '@clerk/clerk-react'
 import App from './App.tsx'
-import { ThemeProvider } from './components/theme-provider.tsx';
+import { ThemeProvider } from './components/theme-provider.tsx'
 
 // Import your Publishable Key
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
 
 if (!PUBLISHABLE_KEY) {
-  throw new Error("Missing Publishable Key")
+    throw new Error('Missing Publishable Key')
 }
 
 createRoot(document.getElementById('root')!).render(
@@ -23,5 +23,5 @@ createRoot(document.getElementById('root')!).render(
                 </BrowserRouter>
             </ThemeProvider>
         </ClerkProvider>
-    </StrictMode>,
+    </StrictMode>
 )
