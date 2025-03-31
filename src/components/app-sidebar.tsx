@@ -23,7 +23,7 @@ const data = {
     navMain: [
         {
             title: 'Panel de control',
-            url: '/dashboard',
+            url: '/',
             icon: LayoutDashboardIcon
         },
         {
