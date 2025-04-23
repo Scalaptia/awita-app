@@ -3,7 +3,8 @@ import {
     BellIcon,
     CircleCheckIcon,
     RadioIcon,
-    LayoutDashboardIcon
+    LayoutDashboardIcon,
+    Loader2Icon
 } from 'lucide-react'
 
 import { NavMain } from '@/components/ui/nav-main'
@@ -17,7 +18,7 @@ import {
     SidebarMenu,
     SidebarMenuItem
 } from '@/components/ui/sidebar'
-import { Link } from 'react-router'
+import { Link } from 'react-router-dom'
 
 const data = {
     navMain: [
@@ -39,9 +40,9 @@ const data = {
     ],
     navSecondary: [
         {
-            title: 'Sistema funcional',
-            bg: 'bg-green-500',
-            icon: CircleCheckIcon
+            icon: Loader2Icon,
+            text: 'Cargando...',
+            color: 'text-muted-foreground'
         }
     ]
 }

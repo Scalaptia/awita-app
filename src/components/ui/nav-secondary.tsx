@@ -1,35 +1,48 @@
-import * as React from 'react'
-import { LucideIcon } from 'lucide-react'
+import { AlertCircleIcon, CircleCheckIcon, Loader2Icon } from 'lucide-react'
 import {
     SidebarGroup,
     SidebarGroupContent,
     SidebarMenu,
     SidebarMenuItem
 } from '@/components/ui/sidebar'
-export function NavSecondary({
-    items,
-    ...props
-}: {
-    items: {
-        title: string
-        bg?: string
-        icon: LucideIcon
-    }[]
-} & React.ComponentPropsWithoutRef<typeof SidebarGroup>) {
+import { useHealth } from '@/hooks/use-health'
+import { cn } from '@/lib/utils'
+
+export function NavSecondary({ className, ...props }: any) {
+    const status = useHealth()
+
+    const statusConfig = {
+        ok: {
+            icon: CircleCheckIcon,
+            text: 'Sistema funcional',
+            color: 'text-green-500'
+        },
+        error: {
+            icon: AlertCircleIcon,
+            text: 'Error del sistema',
+            color: 'text-red-500'
+        },
+        loading: {
+            icon: Loader2Icon,
+            text: 'Cargando...',
+            color: 'text-muted-foreground'
+        }
+    }[status]
+
     return (
-        <SidebarGroup {...props}>
+        <SidebarGroup className={className} {...props}>
             <SidebarGroupContent>
                 <SidebarMenu>
-                    {items.map((item) => (
-                        <SidebarMenuItem key={item.title}>
-                            <div
-                                className={`flex items-center gap-2 p-2 rounded-md ${item.bg ?? 'bg-sidebar-secondary'}`}
-                            >
-                                <item.icon />
-                                <span>{item.title}</span>
-                            </div>
-                        </SidebarMenuItem>
-                    ))}
+                    <SidebarMenuItem>
+                        <div className="flex items-center gap-2 rounded-md border border-border/50 bg-background/50 p-2 dark:border-border/25 dark:bg-background/10">
+                            <statusConfig.icon
+                                className={cn('size-4', statusConfig.color, {
+                                    'animate-spin': status === 'loading'
+                                })}
+                            />
+                            <span>{statusConfig.text}</span>
+                        </div>
+                    </SidebarMenuItem>
                 </SidebarMenu>
             </SidebarGroupContent>
         </SidebarGroup>

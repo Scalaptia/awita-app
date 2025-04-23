@@ -6,7 +6,7 @@ import {
     SidebarMenuItem
 } from '@/components/ui/sidebar'
 import { LucideIcon } from 'lucide-react'
-import { NavLink } from 'react-router'
+import { NavLink } from 'react-router-dom'
 
 export function NavMain({
     items
@@ -22,14 +22,14 @@ export function NavMain({
             <SidebarGroupContent className="flex flex-col gap-2">
                 <SidebarMenu>
                     {items.map((item) => (
-                        <NavLink to={item.url} key={item.title}>
-                            <SidebarMenuItem>
-                                <SidebarMenuButton tooltip={item.title}>
+                        <SidebarMenuItem key={item.title}>
+                            <SidebarMenuButton asChild tooltip={item.title}>
+                                <NavLink to={item.url}>
                                     {item.icon && <item.icon />}
                                     <span>{item.title}</span>
-                                </SidebarMenuButton>
-                            </SidebarMenuItem>
-                        </NavLink>
+                                </NavLink>
+                            </SidebarMenuButton>
+                        </SidebarMenuItem>
                     ))}
                 </SidebarMenu>
             </SidebarGroupContent>
