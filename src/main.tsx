@@ -13,6 +13,7 @@ import Sensors from './pages/sensors.tsx'
 import SignIn from './pages/sign-in.tsx'
 import SignUp from './pages/sign-up.tsx'
 import { ProtectedRoute } from './components/protected-route.tsx'
+import { Toaster } from 'sonner'
 
 // Import your Publishable Key
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
@@ -53,6 +54,7 @@ createRoot(document.getElementById('root')!).render(
                                 </Route>
                             </Route>
                         </Routes>
+                        <Toaster />
                     </ThemeProvider>
                 </QueryProvider>
             </ClerkProvider>

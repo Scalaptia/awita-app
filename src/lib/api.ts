@@ -65,11 +65,16 @@ class ApiClient {
         return response.json()
     }
 
-    async post<T>(endpoint: string, data: unknown): Promise<T> {
+    async post<T>(
+        endpoint: string,
+        data: unknown,
+        options: { headers?: Record<string, string> } = {}
+    ): Promise<T> {
         const response = await this.fetchWithAuth(endpoint, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                ...options.headers
             },
             body: JSON.stringify(data)
         })

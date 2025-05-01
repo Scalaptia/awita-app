@@ -67,7 +67,6 @@ export function useDeleteSensorMutation() {
     })
 }
 
-// Add a new function to create sensors
 export async function createSensor(data: Omit<Sensor, 'id'>): Promise<Sensor> {
     return apiClient.post<Sensor>('/sensors', data)
 }
@@ -77,9 +76,8 @@ export function useCreateSensorMutation() {
     const queryClient = useQueryClient()
 
     return useMutation({
-        mutationFn: createSensor,
-        onSuccess: (newSensor) => {
-            // Invalidate sensors list
+        mutationFn: (data: Omit<Sensor, 'id'>) => createSensor(data),
+        onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: queryKeys.sensors })
         }
     })
@@ -103,5 +101,30 @@ export function useSensorQuery(id: string) {
         retry: 3,
         retryDelay: 1000,
         staleTime: 1000 * 60 * 5 // 5 minutes
+    })
+}
+
+export async function registerSensor(sensor_id: string): Promise<Sensor> {
+    try {
+        return await apiClient.post<Sensor>('/sensors/register', { sensor_id })
+    } catch (error) {
+        const apiError = error as ApiError
+        const message =
+            apiError.response?.data?.message ||
+            `Error al registrar el sensor: ${apiError.message}`
+        throw new Error(message)
+    }
+}
+
+// Register sensor mutation hook
+export function useRegisterSensorMutation() {
+    const queryClient = useQueryClient()
+
+    return useMutation({
+        mutationFn: registerSensor,
+        onSuccess: (newSensor) => {
+            // Invalidate sensors list to trigger a refresh
+            queryClient.invalidateQueries({ queryKey: queryKeys.sensors })
+        }
     })
 }
