@@ -1,6 +1,7 @@
 import { useAuthStore } from '@/stores/AuthStore'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { apiClient, queryKeys } from '@/lib/api'
+import { SENSOR_ERROR_MESSAGES, ApiError } from './errors'
 
 export async function getSensors(): Promise<Sensor[]> {
     return apiClient.get<Sensor[]>('/sensors')
@@ -106,13 +107,17 @@ export function useSensorQuery(id: string) {
 
 export async function registerSensor(sensor_id: string): Promise<Sensor> {
     try {
-        return await apiClient.post<Sensor>('/sensors/register', { sensor_id })
+        return await apiClient.post<Sensor>('/sensors', { sensor_id })
     } catch (error) {
-        const apiError = error as ApiError
-        const message =
-            apiError.response?.data?.message ||
-            `Error al registrar el sensor: ${apiError.message}`
-        throw new Error(message)
+        if (error instanceof ApiError) {
+            const message =
+                SENSOR_ERROR_MESSAGES[error.status] ||
+                'Error al registrar el sensor'
+
+            throw new ApiError(message, error.status)
+        }
+
+        throw new ApiError('Error inesperado', 500)
     }
 }
 

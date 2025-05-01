@@ -22,3 +22,14 @@ interface ApiError {
     }
     message: string
 }
+
+interface ApiResponse<T> {
+    success: boolean
+    message: string
+    data?: T
+}
+
+interface RegisterSensorResponse {
+    sensorId: string
+    userId: string
+}

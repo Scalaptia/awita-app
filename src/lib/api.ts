@@ -1,5 +1,6 @@
 import { useAuthStore } from '@/stores/AuthStore'
 import { useQuery } from '@tanstack/react-query'
+import { ApiError } from './errors'
 
 class ApiClient {
     private baseUrl: string
@@ -45,9 +46,7 @@ class ApiClient {
         }
 
         if (!response.ok) {
-            throw new Error(
-                `API error (${response.status}): ${response.statusText}`
-            )
+            throw new ApiError(response.statusText, response.status)
         }
 
         return response
