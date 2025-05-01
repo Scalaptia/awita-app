@@ -1,12 +1,14 @@
+import { LoadingSensorRow } from './loading-sensor-row'
+import { SensorTableRow } from './sensor-table-row'
 import {
     Table,
+    TableBody,
     TableHeader,
     TableRow,
-    TableHead,
-    TableBody
+    TableHead
 } from '@/components/ui/table'
-import { SensorTableRow } from './sensor-table-row'
-import { LoadingSensorRow } from './loading-sensor-row'
+import { Input } from '@/components/ui/input'
+import { RegisterSensorDialog } from './register-sensor-dialog'
 
 interface SensorsTableProps {
     sensors: Sensor[]
@@ -21,44 +23,90 @@ export function SensorsTable({
     onDelete,
     onUpdate
 }: SensorsTableProps) {
+    if (loading) {
+        return (
+            <div>
+                <div className="flex items-center justify-between gap-4 py-4">
+                    <div className="flex-1 max-w-sm">
+                        <Input disabled placeholder="Filtrar sensores..." />
+                    </div>
+                    <RegisterSensorDialog />
+                </div>
+                <div className="rounded-md border overflow-x-auto">
+                    <Table className="min-w-max">
+                        <TableHeader>
+                            <TableRow>
+                                <TableHead className="w-[70px]">ID</TableHead>
+                                <TableHead className="w-[160px]">
+                                    Nombre
+                                </TableHead>
+                                <TableHead className="w-[160px]">
+                                    Ubicación
+                                </TableHead>
+                                <TableHead className="w-[120px]">
+                                    Estado
+                                </TableHead>
+                                <TableHead className="w-[160px]">
+                                    Intervalo
+                                </TableHead>
+                                <TableHead className="w-[120px]">
+                                    Última lectura
+                                </TableHead>
+                                <TableHead className="w-[100px]"></TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                            {Array(2)
+                                .fill(0)
+                                .map((_, i) => (
+                                    <LoadingSensorRow key={i} />
+                                ))}
+                        </TableBody>
+                    </Table>
+                </div>
+            </div>
+        )
+    }
+
     return (
-        <Table>
-            <TableHeader>
-                <TableRow>
-                    <TableHead>Nombre</TableHead>
-                    <TableHead>Ubicación</TableHead>
-                    <TableHead>Capacidad (L)</TableHead>
-                    <TableHead>Estado</TableHead>
-                    <TableHead>Intervalo</TableHead>
-                    <TableHead>Última Lectura</TableHead>
-                    <TableHead>Acciones</TableHead>
-                </TableRow>
-            </TableHeader>
-            <TableBody>
-                {loading
-                    ? Array(5)
-                          .fill(0)
-                          .map((_, i) => <LoadingSensorRow key={i} />)
-                    : sensors.map((sensor, index) => (
-                          <SensorTableRow
-                              key={sensor.id}
-                              sensor={sensor}
-                              index={index}
-                              onDelete={onDelete}
-                              onUpdate={onUpdate}
-                          />
-                      ))}
-                {!loading && sensors.length === 0 && (
-                    <TableRow>
-                        <td
-                            colSpan={7}
-                            className="text-center text-muted-foreground"
-                        >
-                            No hay sensores registrados
-                        </td>
-                    </TableRow>
-                )}
-            </TableBody>
-        </Table>
+        <div>
+            <div className="flex items-center justify-between gap-4 py-4">
+                <div className="flex-1 max-w-sm">
+                    <Input placeholder="Filtrar sensores..." />
+                </div>
+                <RegisterSensorDialog />
+            </div>
+            <div className="rounded-md border overflow-x-auto">
+                <Table className="min-w-max">
+                    <TableHeader>
+                        <TableRow>
+                            <TableHead className="w-[70px]">ID</TableHead>
+                            <TableHead className="w-[160px]">Nombre</TableHead>
+                            <TableHead className="w-[160px]">
+                                Ubicación
+                            </TableHead>
+                            <TableHead className="w-[120px]">Estado</TableHead>
+                            <TableHead className="w-[160px]">
+                                Intervalo
+                            </TableHead>
+                            <TableHead className="w-[120px]">
+                                Última lectura
+                            </TableHead>
+                            <TableHead className="w-[100px]"></TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {sensors.map((sensor) => (
+                            <SensorTableRow
+                                key={sensor.id}
+                                sensor={sensor}
+                                onDelete={onDelete}
+                                onUpdate={onUpdate}
+                            />
+                        ))}
+                    </TableBody>
+                </Table>
+            </div>
+        </div>
     )
 }

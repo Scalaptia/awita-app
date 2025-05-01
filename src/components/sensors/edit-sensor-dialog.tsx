@@ -22,9 +22,14 @@ interface EditSensorForm {
 interface EditSensorDialogProps {
     sensor: Sensor
     onUpdate: (updatedSensor: Sensor) => void
+    trigger?: React.ReactNode
 }
 
-export function EditSensorDialog({ sensor, onUpdate }: EditSensorDialogProps) {
+export function EditSensorDialog({
+    sensor,
+    onUpdate,
+    trigger
+}: EditSensorDialogProps) {
     const [open, setOpen] = useState(false)
     const {
         register,
@@ -52,9 +57,11 @@ export function EditSensorDialog({ sensor, onUpdate }: EditSensorDialogProps) {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button variant="ghost" size="icon">
-                    <Pencil className="h-4 w-4" />
-                </Button>
+                {trigger || (
+                    <Button variant="ghost" size="icon">
+                        <Pencil className="h-4 w-4" />
+                    </Button>
+                )}
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
