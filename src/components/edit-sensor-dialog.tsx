@@ -7,7 +7,7 @@ import {
     DialogTrigger
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
-import { Sensor, updateSensor } from '@/lib/api'
+import { Sensor, updateSensor } from '@/lib/sensors-api'
 import { Pencil } from 'lucide-react'
 import { useState } from 'react'
 

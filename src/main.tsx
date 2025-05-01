@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { ClerkProvider } from '@clerk/clerk-react'
 import { dark } from '@clerk/themes'
 import { esMX } from '@clerk/localizations'
+import { QueryProvider } from './components/query-provider'
 import App from './App.tsx'
 import { ThemeProvider } from './components/theme-provider.tsx'
 import Dashboard from './pages/dashboard.tsx'
@@ -25,28 +26,35 @@ createRoot(document.getElementById('root')!).render(
         <BrowserRouter>
             <ClerkProvider
                 publishableKey={PUBLISHABLE_KEY}
-                afterSignOutUrl="/sign-in"
                 appearance={{
                     baseTheme: dark
                 }}
                 localization={esMX}
             >
-                <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
-                    <Routes>
-                        {/* Public routes */}
-                        <Route path="/sign-in" element={<SignIn />} />
-                        <Route path="/sign-up" element={<SignUp />} />
+                <QueryProvider>
+                    <ThemeProvider
+                        defaultTheme="system"
+                        storageKey="vite-ui-theme"
+                    >
+                        <Routes>
+                            {/* Public routes */}
+                            <Route path="/sign-in" element={<SignIn />} />
+                            <Route path="/sign-up" element={<SignUp />} />
 
-                        {/* Protected routes */}
-                        <Route element={<ProtectedRoute />}>
-                            <Route element={<App />}>
-                                <Route index element={<Dashboard />} />
-                                <Route path="alerts" element={<Alerts />} />
-                                <Route path="sensors" element={<Sensors />} />
+                            {/* Protected routes */}
+                            <Route element={<ProtectedRoute />}>
+                                <Route element={<App />}>
+                                    <Route index element={<Dashboard />} />
+                                    <Route path="alerts" element={<Alerts />} />
+                                    <Route
+                                        path="sensors"
+                                        element={<Sensors />}
+                                    />
+                                </Route>
                             </Route>
-                        </Route>
-                    </Routes>
-                </ThemeProvider>
+                        </Routes>
+                    </ThemeProvider>
+                </QueryProvider>
             </ClerkProvider>
         </BrowserRouter>
     </StrictMode>

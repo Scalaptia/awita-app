@@ -1,33 +1,24 @@
-import { getSensors, deleteSensor, updateSensor } from '@/lib/api'
+import {
+    useSensorsQuery,
+    useUpdateSensorMutation,
+    useDeleteSensorMutation
+} from '@/lib/sensors-api'
 import { useAppStore } from '@/stores/AppStore'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { SensorsTable } from '@/components/sensors/sensors-table'
-import { Sensor } from '@/types/sensor'
 
 export default function Sensors() {
     const setTitle = useAppStore((state: any) => state.setTitle)
-    const [sensors, setSensors] = useState<Sensor[]>([])
-    const [loading, setLoading] = useState(true)
-    const [error, setError] = useState<string | null>(null)
+    const { data: sensors, isLoading, error } = useSensorsQuery()
+    const { mutate: updateSensor } = useUpdateSensorMutation()
+    const { mutate: deleteSensor } = useDeleteSensorMutation()
 
     useEffect(() => {
         setTitle('Sensores')
-        fetchSensors()
     }, [])
 
-    const fetchSensors = async () => {
-        try {
-            const data = await getSensors()
-            setSensors(data)
-        } catch (err) {
-            setError('Error al cargar los sensores')
-        } finally {
-            setLoading(false)
-        }
-    }
-
     const handleDragEnd = async (result: any) => {
-        if (!result.destination) return
+        if (!result.destination || !sensors) return
 
         const items = Array.from(sensors)
         const [reorderedItem] = items.splice(result.source.index, 1)
@@ -38,37 +29,28 @@ export default function Sensors() {
             order: index
         }))
 
-        setSensors(updatedSensors)
-
-        try {
-            await updateSensor(reorderedItem.id, {
-                order: result.destination.index
-            })
-        } catch (error) {
-            console.error('Failed to update sensor order:', error)
-            fetchSensors()
-        }
+        // Update the sensor order in the backend
+        updateSensor({
+            id: reorderedItem.id,
+            data: { order: result.destination.index }
+        })
     }
 
     const handleDelete = async (id: string) => {
         if (!confirm('¿Está seguro de eliminar este sensor?')) return
-
-        try {
-            await deleteSensor(id)
-            setSensors(sensors.filter((s) => s.id !== id))
-        } catch (error) {
-            console.error('Failed to delete sensor:', error)
-        }
+        deleteSensor(id)
     }
 
     const handleUpdate = (updated: Sensor) => {
-        setSensors(sensors.map((s) => (s.id === updated.id ? updated : s)))
+        updateSensor({ id: updated.id, data: updated })
     }
 
     if (error) {
         return (
             <div className="rounded-md bg-destructive/15 p-4 text-destructive">
-                {error}
+                {error instanceof Error
+                    ? error.message
+                    : 'Error al cargar los sensores'}
             </div>
         )
     }
@@ -77,8 +59,8 @@ export default function Sensors() {
         <div className="px-6 py-1">
             <div className="rounded-md border">
                 <SensorsTable
-                    sensors={sensors}
-                    loading={loading}
+                    sensors={sensors || []}
+                    loading={isLoading}
                     onDragEnd={handleDragEnd}
                     onDelete={handleDelete}
                     onUpdate={handleUpdate}

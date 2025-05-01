@@ -1,78 +1,146 @@
-interface HealthCheckResponse {
-    status: 'ok' | 'error'
-    info: {
-        database: {
-            status: 'up' | 'down'
+import { useAuthStore } from '@/stores/AuthStore'
+import { useQuery } from '@tanstack/react-query'
+
+class ApiClient {
+    private baseUrl: string
+
+    constructor() {
+        this.baseUrl = import.meta.env.VITE_API_URL
+    }
+
+    private async fetchWithAuth(
+        endpoint: string,
+        options: RequestInit = {}
+    ): Promise<Response> {
+        if (!window.Clerk) {
+            throw new Error('Authentication not initialized')
+        }
+
+        const { userId, isSignedIn } = useAuthStore.getState()
+
+        if (!isSignedIn || !userId) {
+            throw new Error('User is not authenticated')
+        }
+
+        const token = await window.Clerk.session?.getToken()
+
+        if (!token) {
+            throw new Error('No authentication token available')
+        }
+
+        const headers = {
+            ...options.headers,
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+            'clerk-user-id': userId
+        }
+
+        const response = await fetch(`${this.baseUrl}${endpoint}`, {
+            ...options,
+            headers
+        })
+
+        if (response.status === 401) {
+            throw new Error('Unauthorized: Please sign in again')
+        }
+
+        if (!response.ok) {
+            throw new Error(
+                `API error (${response.status}): ${response.statusText}`
+            )
+        }
+
+        return response
+    }
+
+    async get<T>(endpoint: string): Promise<T> {
+        const response = await this.fetchWithAuth(endpoint)
+
+        if (!response.ok) {
+            throw new Error(
+                `API error (${response.status}): ${response.statusText}`
+            )
+        }
+
+        return response.json()
+    }
+
+    async post<T>(endpoint: string, data: unknown): Promise<T> {
+        const response = await this.fetchWithAuth(endpoint, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+
+        if (!response.ok) {
+            throw new Error(
+                `API error (${response.status}): ${response.statusText}`
+            )
+        }
+
+        return response.json()
+    }
+
+    async patch<T>(endpoint: string, data: unknown): Promise<T> {
+        const response = await this.fetchWithAuth(endpoint, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+
+        if (!response.ok) {
+            throw new Error(
+                `API error (${response.status}): ${response.statusText}`
+            )
+        }
+
+        return response.json()
+    }
+
+    async delete(endpoint: string): Promise<void> {
+        const response = await this.fetchWithAuth(endpoint, {
+            method: 'DELETE'
+        })
+
+        if (!response.ok) {
+            throw new Error(
+                `API error (${response.status}): ${response.statusText}`
+            )
         }
     }
-    error: Record<string, unknown>
-    details: {
-        database: {
-            status: 'up' | 'down'
-        }
-    }
+}
+
+// Singleton instance
+const apiClient = new ApiClient()
+export { apiClient }
+
+// Query keys for caching and invalidation
+export const queryKeys = {
+    health: ['health'],
+    sensors: ['sensors'],
+    sensor: (id: string) => ['sensors', id]
 }
 
 export async function checkHealth(): Promise<HealthCheckResponse> {
-    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000'
-    const response = await fetch(`${apiUrl}/health`)
-    if (!response.ok) {
-        throw new Error('Health check failed')
-    }
-    return response.json()
+    return apiClient.get<HealthCheckResponse>('/health')
 }
 
-export interface SensorReading {
-    id: string
-    reading: string
-    timestamp: string
-    sensor_id: string
-}
+// Health check query hook
+export function useHealthQuery() {
+    const { userId, isSignedIn } = useAuthStore()
 
-export interface WaterLevelInfo {
-    currentLevel: number
-    percentage: number
-}
-
-export interface Sensor {
-    id: string
-    name: string
-    location?: string
-    capacity: number
-    status: 'connected' | 'disconnected'
-    measurement_interval?: number
-    order: number
-    sensor_readings?: SensorReading[]
-    water_level?: WaterLevelInfo
-}
-
-export async function getSensors(): Promise<Sensor[]> {
-    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000'
-    const response = await fetch(`${apiUrl}/sensors`)
-    if (!response.ok) {
-        throw new Error('Failed to fetch sensors')
-    }
-    return response.json()
-}
-
-export async function updateSensor(
-    id: string,
-    data: Partial<Sensor>
-): Promise<Sensor> {
-    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000'
-    const response = await fetch(`${apiUrl}/sensors/${id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
+    return useQuery({
+        queryKey: queryKeys.health,
+        queryFn: checkHealth,
+        // Only execute when user is actually signed in
+        enabled: !!userId && isSignedIn,
+        // Add retry logic
+        retry: 3,
+        retryDelay: 1000,
+        staleTime: 1000 * 60 * 1 // 1 minute
     })
-    if (!response.ok) throw new Error('Failed to update sensor')
-    return response.json()
-}
-
-export async function deleteSensor(id: string): Promise<void> {
-    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000'
-    const response = await fetch(`${apiUrl}/sensors/${id}`, {
-        method: 'DELETE'
-    })
-    if (!response.ok) throw new Error('Failed to delete sensor')
 }

@@ -1,34 +1,15 @@
-import { useState, useEffect } from 'react'
-
-interface HealthResponse {
-    status: 'ok' | 'error'
-    info: {
-        database: {
-            status: 'up' | 'down'
-        }
-    }
-}
+import { useHealthQuery } from '@/lib/api'
 
 export function useHealth() {
-    const [status, setStatus] = useState<'ok' | 'error' | 'loading'>('loading')
+    const { data, isLoading, isError } = useHealthQuery()
 
-    useEffect(() => {
-        const checkHealth = async () => {
-            try {
-                const response = await fetch(
-                    `${import.meta.env.VITE_API_URL}/health`
-                )
-                const data: HealthResponse = await response.json()
-                setStatus(data.status)
-            } catch (err) {
-                setStatus('error')
-            }
-        }
+    if (isLoading) {
+        return 'loading'
+    }
 
-        checkHealth()
-        const interval = setInterval(checkHealth, 30000)
-        return () => clearInterval(interval)
-    }, [])
+    if (isError || !data) {
+        return 'error'
+    }
 
-    return status
+    return data.status
 }
