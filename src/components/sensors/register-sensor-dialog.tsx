@@ -38,7 +38,7 @@ export function RegisterSensorDialog() {
 
     return (
         <>
-            <Button onClick={() => setOpen(true)} className="mb-4">
+            <Button onClick={() => setOpen(true)}>
                 <PlusCircle className="mr-2 h-4 w-4" /> Registrar Sensor
             </Button>
 

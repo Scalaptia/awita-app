@@ -1,3 +1,4 @@
+import React, { useState } from 'react'
 import { LoadingSensorRow } from './loading-sensor-row'
 import { SensorTableRow } from './sensor-table-row'
 import {
@@ -23,12 +24,24 @@ export function SensorsTable({
     onDelete,
     onUpdate
 }: SensorsTableProps) {
+    const [filter, setFilter] = useState('')
+    const filteredSensors = sensors.filter(
+        (sensor) =>
+            sensor.name.toLowerCase().includes(filter.toLowerCase()) ||
+            sensor.id.toLowerCase().includes(filter.toLowerCase())
+    )
+
     if (loading) {
         return (
             <div>
                 <div className="flex items-center justify-between gap-4 py-4">
                     <div className="flex-1 max-w-sm">
-                        <Input disabled placeholder="Filtrar sensores..." />
+                        <Input
+                            disabled
+                            placeholder="Filtrar sensores..."
+                            value={filter}
+                            onChange={(e) => setFilter(e.target.value)}
+                        />
                     </div>
                     <RegisterSensorDialog />
                 </div>
@@ -56,7 +69,7 @@ export function SensorsTable({
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {Array(2)
+                            {Array(3)
                                 .fill(0)
                                 .map((_, i) => (
                                     <LoadingSensorRow key={i} />
@@ -72,7 +85,11 @@ export function SensorsTable({
         <div>
             <div className="flex items-center justify-between gap-4 py-4">
                 <div className="flex-1 max-w-sm">
-                    <Input placeholder="Filtrar sensores..." />
+                    <Input
+                        placeholder="Filtrar sensores..."
+                        value={filter}
+                        onChange={(e) => setFilter(e.target.value)}
+                    />
                 </div>
                 <RegisterSensorDialog />
             </div>
@@ -96,7 +113,7 @@ export function SensorsTable({
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {sensors.map((sensor) => (
+                        {filteredSensors.map((sensor) => (
                             <SensorTableRow
                                 key={sensor.id}
                                 sensor={sensor}

@@ -18,7 +18,6 @@ export default function Sensors() {
     }, [])
 
     const handleDelete = async (id: string) => {
-        if (!confirm('¿Está seguro de eliminar este sensor?')) return
         deleteSensor(id)
     }
 

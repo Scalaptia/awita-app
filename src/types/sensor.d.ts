@@ -15,8 +15,8 @@ interface Sensor {
     name: string
     location?: string
     capacity: number
-    status?: 'connected' | 'disconnected'
-    measurement_interval?: number
+    status?: boolean
+    time_between_readings?: number
     sensor_readings?: SensorReading[]
     water_level?: WaterLevel | null
     water_distance?: number

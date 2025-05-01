@@ -38,26 +38,26 @@ export const columns: ColumnDef<Sensor>[] = [
         accessorKey: 'status',
         header: 'Estado',
         cell: ({ row }) => {
-            const status = row.getValue('status') as string
+            const status = row.getValue('status') as boolean
             return (
                 <span
                     className={cn(
                         'inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ring-1 ring-inset',
-                        status === 'connected'
+                        status
                             ? 'bg-green-50 text-green-700 ring-green-600/20'
                             : 'bg-red-50 text-red-700 ring-red-600/20'
                     )}
                 >
-                    {status === 'connected' ? 'Conectado' : 'Desconectado'}
+                    {status ? 'Conectado' : 'Desconectado'}
                 </span>
             )
         }
     },
     {
-        accessorKey: 'measurement_interval',
+        accessorKey: 'time_between_readings',
         header: 'Intervalo',
         cell: ({ row }) => {
-            const interval = row.getValue('measurement_interval')
+            const interval = row.getValue('time_between_readings') as number
             return interval ? (
                 <span className="text-muted-foreground">
                     Cada {interval} min

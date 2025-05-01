@@ -4,7 +4,8 @@ import {
     DialogContent,
     DialogHeader,
     DialogTitle,
-    DialogTrigger
+    DialogTrigger,
+    DialogFooter
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -16,7 +17,9 @@ import { toast } from 'sonner'
 
 interface EditSensorForm {
     location: string
-    measurement_interval: number
+    capacity: number
+    height: number
+    time_between_readings: number
 }
 
 interface EditSensorDialogProps {
@@ -38,7 +41,9 @@ export function EditSensorDialog({
     } = useForm<EditSensorForm>({
         defaultValues: {
             location: sensor.location || '',
-            measurement_interval: sensor.measurement_interval || 5
+            capacity: sensor.capacity,
+            height: sensor.height ?? 0,
+            time_between_readings: sensor.time_between_readings || 5
         }
     })
 
@@ -64,7 +69,7 @@ export function EditSensorDialog({
                 )}
             </DialogTrigger>
             <DialogContent>
-                <DialogHeader>
+                <DialogHeader className="mb-4">
                     <DialogTitle>Editar Sensor: {sensor.name}</DialogTitle>
                 </DialogHeader>
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -78,34 +83,72 @@ export function EditSensorDialog({
                         />
                     </div>
                     <div className="space-y-2">
-                        <Label htmlFor="measurement_interval">
+                        <Label htmlFor="capacity">Capacidad (L)</Label>
+                        <Input
+                            id="capacity"
+                            type="number"
+                            aria-invalid={!!errors.capacity}
+                            {...register('capacity', {
+                                valueAsNumber: true,
+                                required: true,
+                                min: 1
+                            })}
+                        />
+                        {errors.capacity?.type === 'min' && (
+                            <p className="text-sm text-red-500">
+                                La capacidad mínima es 1
+                            </p>
+                        )}
+                    </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="height">Altura (cm)</Label>
+                        <Input
+                            id="height"
+                            type="number"
+                            aria-invalid={!!errors.height}
+                            {...register('height', {
+                                valueAsNumber: true,
+                                required: true,
+                                min: 0
+                            })}
+                        />
+                        {errors.height?.type === 'min' && (
+                            <p className="text-sm text-red-500">
+                                La altura no puede ser negativa
+                            </p>
+                        )}
+                    </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="time_between_readings">
                             Intervalo de Medición (minutos)
                         </Label>
                         <Input
-                            id="measurement_interval"
+                            id="time_between_readings"
                             type="number"
-                            aria-invalid={!!errors.measurement_interval}
-                            {...register('measurement_interval', {
+                            aria-invalid={!!errors.time_between_readings}
+                            {...register('time_between_readings', {
                                 valueAsNumber: true,
                                 required: true,
                                 min: 1,
                                 max: 1440 // 24 hours in minutes
                             })}
                         />
-                        {errors.measurement_interval?.type === 'min' && (
+                        {errors.time_between_readings?.type === 'min' && (
                             <p className="text-sm text-red-500">
                                 El intervalo mínimo es 1 minuto
                             </p>
                         )}
-                        {errors.measurement_interval?.type === 'max' && (
+                        {errors.time_between_readings?.type === 'max' && (
                             <p className="text-sm text-red-500">
                                 El intervalo máximo es 24 horas
                             </p>
                         )}
                     </div>
-                    <Button type="submit" disabled={isSubmitting}>
-                        {isSubmitting ? 'Guardando...' : 'Guardar'}
-                    </Button>
+                    <DialogFooter>
+                        <Button type="submit" disabled={isSubmitting}>
+                            {isSubmitting ? 'Guardando...' : 'Guardar'}
+                        </Button>
+                    </DialogFooter>
                 </form>
             </DialogContent>
         </Dialog>

@@ -2,6 +2,7 @@ import { TableRow, TableCell } from '@/components/ui/table'
 import { Button } from '@/components/ui/button'
 import { UnlinkIcon } from 'lucide-react'
 import { EditSensorDialog } from '@/components/sensors/edit-sensor-dialog'
+import { DeleteSensorDialog } from './delete-sensor-dialog'
 import { cn } from '@/lib/utils'
 
 interface SensorTableRowProps {
@@ -42,20 +43,18 @@ export function SensorTableRow({
                 <span
                     className={cn(
                         'inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ring-1 ring-inset',
-                        sensor.status === 'connected'
+                        sensor.status
                             ? 'bg-green-50 text-green-700 ring-green-600/20'
                             : 'bg-red-50 text-red-700 ring-red-600/20'
                     )}
                 >
-                    {sensor.status === 'connected'
-                        ? 'Conectado'
-                        : 'Desconectado'}
+                    {sensor.status ? 'Conectado' : 'Desconectado'}
                 </span>
             </TableCell>
             <TableCell>
-                {sensor.measurement_interval ? (
+                {sensor.time_between_readings ? (
                     <span className="text-muted-foreground">
-                        Cada {sensor.measurement_interval} min
+                        Cada {sensor.time_between_readings} min
                     </span>
                 ) : (
                     '-'
@@ -65,14 +64,10 @@ export function SensorTableRow({
             <TableCell className="text-right">
                 <div className="flex items-center justify-end gap-2 opacity-60 hover:opacity-100">
                     <EditSensorDialog sensor={sensor} onUpdate={onUpdate} />
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => onDelete(sensor.id)}
-                        className="text-muted-foreground hover:text-red-500"
-                    >
-                        <UnlinkIcon className="h-4 w-4" />
-                    </Button>
+                    <DeleteSensorDialog
+                        sensorName={sensor.name}
+                        onDelete={() => onDelete(sensor.id)}
+                    />
                 </div>
             </TableCell>
         </TableRow>
