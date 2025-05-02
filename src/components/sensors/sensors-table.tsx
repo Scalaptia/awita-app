@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { LoadingSensorRow } from './loading-sensor-row'
 import { SensorTableRow } from './sensor-table-row'
 import {

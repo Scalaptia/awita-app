@@ -1,4 +1,4 @@
-import { SunIcon, MoonIcon, MonitorIcon } from 'lucide-react'
+import { SunIcon, MoonIcon } from 'lucide-react'
 import {
     DropdownMenuGroup,
     DropdownMenuItem

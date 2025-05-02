@@ -1,6 +1,4 @@
 import { TableRow, TableCell } from '@/components/ui/table'
-import { Button } from '@/components/ui/button'
-import { UnlinkIcon } from 'lucide-react'
 import { EditSensorDialog } from '@/components/sensors/edit-sensor-dialog'
 import { DeleteSensorDialog } from './delete-sensor-dialog'
 import { cn } from '@/lib/utils'

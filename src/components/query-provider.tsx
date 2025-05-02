@@ -6,7 +6,6 @@ interface QueryProviderProps {
     children: ReactNode
 }
 
-// Create a client
 const queryClient = new QueryClient({
     defaultOptions: {
         queries: {

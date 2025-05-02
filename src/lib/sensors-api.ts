@@ -127,7 +127,7 @@ export function useRegisterSensorMutation() {
 
     return useMutation({
         mutationFn: registerSensor,
-        onSuccess: (newSensor) => {
+        onSuccess: () => {
             // Invalidate sensors list to trigger a refresh
             queryClient.invalidateQueries({ queryKey: queryKeys.sensors })
         }

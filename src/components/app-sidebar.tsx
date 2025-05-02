@@ -1,7 +1,6 @@
 import * as React from 'react'
 import {
     BellIcon,
-    CircleCheckIcon,
     RadioIcon,
     LayoutDashboardIcon,
     Loader2Icon

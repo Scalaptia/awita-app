@@ -1,4 +1,3 @@
-import { SectionCards } from '@/components/section-cards'
 import { useAppStore } from '@/stores/AppStore'
 import { useEffect } from 'react'
 
