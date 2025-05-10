@@ -9,7 +9,6 @@ import {
     Tooltip
 } from 'recharts'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
 import {
     Select,
     SelectContent,
@@ -17,31 +16,8 @@ import {
     SelectTrigger,
     SelectValue
 } from '@/components/ui/select'
-import {
-    ChartConfig,
-    ChartContainer,
-    ChartTooltip
-} from '@/components/ui/chart'
-
-interface SensorHistoryReading {
-    created_at: string
-    water_level?: {
-        currentLevel: number
-        percentage: number
-    }
-}
-
-interface Sensor {
-    id: string
-    name: string
-    water_level?: {
-        currentLevel: number
-        percentage: number
-    }
-    sensor_readings?: {
-        created_at: string
-    }[]
-}
+import { ChartConfig, ChartContainer } from '@/components/ui/chart'
+import { Loader2 } from 'lucide-react'
 
 type TimeRange = 'day' | 'month' | 'year'
 
@@ -61,8 +37,6 @@ export function WaterLevelChart({
     isLoading
 }: WaterLevelChartProps) {
     const [timeRange, setTimeRange] = useState<TimeRange>('day')
-
-    const selectedSensorData = sensors.find((s) => s.id === selectedSensor)
 
     // Format data for display with proper date handling
     const formattedData = data.map((reading) => {
@@ -101,7 +75,7 @@ export function WaterLevelChart({
     const chartConfig = {
         nivel: {
             label: 'Nivel de agua',
-            color: 'var(--chart-1)'
+            color: 'var(--color-chart-1)'
         }
     } satisfies ChartConfig
 
@@ -113,7 +87,7 @@ export function WaterLevelChart({
                     onValueChange={onSensorChange}
                     disabled={isLoading}
                 >
-                    <SelectTrigger className="w-[280px]">
+                    <SelectTrigger>
                         <SelectValue placeholder="Seleccionar sensor" />
                     </SelectTrigger>
                     <SelectContent>
@@ -128,7 +102,7 @@ export function WaterLevelChart({
                     value={timeRange}
                     onValueChange={(v) => setTimeRange(v as TimeRange)}
                 >
-                    <SelectTrigger className="w-[120px]">
+                    <SelectTrigger>
                         <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -139,10 +113,13 @@ export function WaterLevelChart({
                 </Select>
             </CardHeader>
             <CardContent>
-                <div className="h-[400px] w-full">
+                <div className="w-full">
                     {isLoading ? (
                         <div className="h-full w-full flex items-center justify-center">
-                            <span>Cargando...</span>
+                            <Loader2
+                                className="animate-spin text-muted-foreground"
+                                size={32}
+                            />
                         </div>
                     ) : (
                         <ChartContainer config={chartConfig}>
@@ -150,10 +127,10 @@ export function WaterLevelChart({
                                 <AreaChart
                                     data={sortedData}
                                     margin={{
-                                        top: 10,
+                                        top: 30,
                                         right: 10,
-                                        left: 0,
-                                        bottom: 30
+                                        left: 10,
+                                        bottom: 0
                                     }}
                                 >
                                     <CartesianGrid
@@ -164,14 +141,12 @@ export function WaterLevelChart({
                                     <XAxis
                                         dataKey="time"
                                         tickLine={false}
-                                        axisLine={false}
                                         tickMargin={10}
-                                        angle={-45}
                                         textAnchor="end"
                                         height={60}
                                         tick={{
-                                            fontSize: 12,
-                                            fill: 'var(--foreground)'
+                                            fontSize: 11,
+                                            fill: 'var(--muted-foreground)'
                                         }}
                                     />
                                     <YAxis
@@ -180,22 +155,40 @@ export function WaterLevelChart({
                                         tickCount={5}
                                         tickFormatter={(value) => `${value}%`}
                                         tickLine={false}
-                                        axisLine={false}
                                         tick={{
-                                            fontSize: 12,
-                                            fill: 'var(--foreground)'
+                                            fontSize: 11,
+                                            fill: 'var(--muted-foreground)'
                                         }}
                                     />
-                                    <ChartTooltip />
+                                    <Tooltip
+                                        formatter={(value) => [
+                                            `${value}%`,
+                                            'Nivel de agua'
+                                        ]}
+                                        contentStyle={{
+                                            backgroundColor:
+                                                'var(--background)',
+                                            borderColor: 'var(--border)',
+                                            borderRadius: '6px'
+                                        }}
+                                        labelStyle={{
+                                            color: 'var(--foreground)'
+                                        }}
+                                    />
                                     <Area
                                         type="monotone"
                                         dataKey="nivel"
-                                        fill="var(--color-nivel)"
+                                        fill="var(--color-chart-1)"
                                         fillOpacity={0.4}
-                                        stroke="var(--color-nivel)"
+                                        stroke="var(--color-chart-1)"
                                         strokeWidth={2}
-                                        dot={{ r: 3 }}
-                                        activeDot={{ r: 5 }}
+                                        isAnimationActive={false}
+                                        activeDot={{
+                                            r: 6,
+                                            strokeWidth: 2,
+                                            fill: 'var(--background)',
+                                            stroke: 'var(--color-chart-1)'
+                                        }}
                                     />
                                 </AreaChart>
                             </ResponsiveContainer>

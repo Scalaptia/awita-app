@@ -1,4 +1,5 @@
 import { cn } from '@/lib/utils'
+import Wave from 'react-wavify'
 
 interface WaterTankGaugeProps {
     name: string
@@ -15,16 +16,7 @@ export function WaterTankGauge({
     approximateVolume,
     onClick
 }: WaterTankGaugeProps) {
-    // Calculate water level display values
     const displayPercentage = Math.round(percentage)
-    const waterHeight = `${percentage}%`
-
-    // Get appropriate color based on water level percentage
-    const getWaterColor = (percentage: number) => {
-        if (percentage <= 20) return 'bg-sky-500'
-        if (percentage <= 60) return 'bg-sky-400'
-        return 'bg-sky-300'
-    }
 
     return (
         <div
@@ -34,20 +26,57 @@ export function WaterTankGauge({
             <h3 className="text-center font-medium mb-4">{name}</h3>
 
             <div className="relative w-32 h-32 mb-4">
-                {/* Outer circle */}
-                <div className="absolute inset-0 rounded-full border-2 border-border/50 overflow-hidden">
-                    {/* Water */}
+                <div className="absolute inset-0 rounded-full border-2 border-border overflow-hidden">
                     <div
-                        className={cn(
-                            'absolute bottom-0 left-0 right-0 transition-all duration-500',
-                            getWaterColor(percentage)
-                        )}
-                        style={{ height: waterHeight }}
-                    />
+                        className="absolute inset-0"
+                        style={{
+                            transform: `translateY(${
+                                83 - Math.min(percentage, 100)
+                            }%)`
+                        }}
+                    >
+                        <svg
+                            style={{
+                                position: 'absolute',
+                                width: 0,
+                                height: 0
+                            }}
+                        >
+                            <defs>
+                                <linearGradient
+                                    id="waterGradient"
+                                    x1="0"
+                                    y1="0"
+                                    x2="0"
+                                    y2="1"
+                                >
+                                    <stop
+                                        offset="0%"
+                                        stopColor="var(--color-chart-1)"
+                                    />
+                                    <stop
+                                        offset="100%"
+                                        stopColor="var(--color-chart-2)"
+                                    />
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                        <Wave
+                            fill="url(#waterGradient)"
+                            paused={false}
+                            style={{ display: 'flex' }}
+                            options={{
+                                amplitude: 1,
+                                speed: 0.3,
+                                points: 2
+                            }}
+                        />
+                    </div>
 
-                    {/* Percentage text */}
-                    <div className="absolute inset-0 flex items-center justify-center text-white font-bold text-xl">
-                        {displayPercentage}%
+                    <div className="absolute inset-0 flex items-center justify-center font-bold text-xl z-10">
+                        <span className={'text-foreground'}>
+                            {displayPercentage}%
+                        </span>
                     </div>
                 </div>
             </div>

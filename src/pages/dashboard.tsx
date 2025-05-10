@@ -28,11 +28,9 @@ export default function Dashboard() {
     // Format date for display
     const formatDate = (dateString: string) => {
         const date = new Date(dateString)
-        return `Hoy a las ${format(date, 'h:mm aaa', { locale: es })}`
-    }
-
-    const handleUpdate = (updatedSensor: Sensor) => {
-        // The sensors list will be automatically updated by the mutation
+        return format(date, 'dd/MM/yyyy HH:mm', {
+            locale: es
+        })
     }
 
     if (error) {
@@ -46,7 +44,7 @@ export default function Dashboard() {
     }
 
     return (
-        <div className="px-6 py-4 space-y-6">
+        <div className="px-6 pb-4 space-y-6">
             {/* Water tanks grid */}
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {isLoading
@@ -67,7 +65,6 @@ export default function Dashboard() {
                           <EditSensorDialog
                               key={sensor.id}
                               sensor={sensor}
-                              onUpdate={handleUpdate}
                               trigger={
                                   <div className="cursor-pointer">
                                       <WaterTankGauge
@@ -88,7 +85,7 @@ export default function Dashboard() {
                                           approximateVolume={
                                               sensor.water_level
                                                   ? `${sensor.water_level.currentLevel.toFixed(
-                                                        1
+                                                        0
                                                     )}L`
                                                   : undefined
                                           }
@@ -100,7 +97,7 @@ export default function Dashboard() {
             </div>
 
             {/* Historical chart */}
-            {sensors && sensors.length > 0 && (
+            {sensors && sensors.length > 0 ? (
                 <WaterLevelChart
                     sensors={sensors}
                     selectedSensor={selectedSensor}
@@ -108,6 +105,11 @@ export default function Dashboard() {
                     data={historyData ?? []}
                     isLoading={isHistoryLoading}
                 />
+            ) : (
+                // Skeleton loading state
+                <div className="animate-pulse rounded-lg bg-card p-4 flex flex-col items-center">
+                    <div className="h-64 w-full bg-muted rounded"></div>
+                </div>
             )}
         </div>
     )
