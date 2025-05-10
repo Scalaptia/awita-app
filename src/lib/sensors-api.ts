@@ -133,3 +133,25 @@ export function useRegisterSensorMutation() {
         }
     })
 }
+
+export async function getSensorHistory(
+    sensorId: string,
+    limit = 50
+): Promise<SensorHistoryReading[]> {
+    return apiClient.get<SensorHistoryReading[]>(
+        `/sensors/${sensorId}/readings?limit=${limit}`
+    )
+}
+
+export function useSensorHistoryQuery(sensorId: string | null, limit = 50) {
+    const { userId, isSignedIn } = useAuthStore()
+
+    return useQuery({
+        queryKey: ['sensorHistory', sensorId, limit],
+        queryFn: () => getSensorHistory(sensorId!, limit),
+        enabled: !!userId && isSignedIn && !!sensorId,
+        retry: 3,
+        retryDelay: 1000,
+        staleTime: 1000 * 60 // 1 minute
+    })
+}
