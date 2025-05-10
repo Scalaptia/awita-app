@@ -2,7 +2,8 @@ import {
     LogInIcon,
     LogOutIcon,
     MoreVerticalIcon,
-    UserCircleIcon
+    UserCircleIcon,
+    BellIcon
 } from 'lucide-react'
 import { useClerk, useUser } from '@clerk/clerk-react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
@@ -11,7 +12,6 @@ import {
     DropdownMenuContent,
     DropdownMenuGroup,
     DropdownMenuItem,
-    DropdownMenuLabel,
     DropdownMenuSeparator,
     DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
@@ -26,7 +26,7 @@ import { ModeToggle } from './ui/theme-toggler'
 export function NavUser() {
     const { isMobile } = useSidebar()
     const { user, isLoaded: userLoaded } = useUser()
-    const { signOut, openSignIn } = useClerk()
+    const { signOut, openSignIn, openUserProfile } = useClerk()
 
     // Show login button if user is not logged in
     if (!user && userLoaded) {
@@ -86,12 +86,7 @@ export function NavUser() {
                         sideOffset={4}
                     >
                         <DropdownMenuGroup>
-                            <DropdownMenuItem
-                                className="cursor-pointer"
-                                onClick={() => {
-                                    window.location.href = '/profile'
-                                }}
-                            >
+                            <DropdownMenuItem onClick={() => openUserProfile()}>
                                 <UserCircleIcon className="mr-2 h-4 w-4" />
                                 Cuenta
                             </DropdownMenuItem>

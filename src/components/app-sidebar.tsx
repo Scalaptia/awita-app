@@ -1,14 +1,9 @@
 import * as React from 'react'
-import {
-    BellIcon,
-    RadioIcon,
-    LayoutDashboardIcon,
-    Loader2Icon
-} from 'lucide-react'
+import { RadioIcon, LayoutDashboardIcon, Loader2Icon } from 'lucide-react'
 
 import { NavMain } from '@/components/ui/nav-main'
-import { NavSecondary } from '@/components/ui/nav-secondary'
 import { NavUser } from '@/components/nav-user'
+import { NavNotifications } from '@/components/nav-notifications'
 import {
     Sidebar,
     SidebarContent,
@@ -25,11 +20,6 @@ const data = {
             title: 'Panel de control',
             url: '/',
             icon: LayoutDashboardIcon
-        },
-        {
-            title: 'Alertas',
-            url: '/alerts',
-            icon: BellIcon
         },
         {
             title: 'Sensores',
@@ -60,9 +50,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             </SidebarHeader>
             <SidebarContent>
                 <NavMain items={data.navMain} />
-                <NavSecondary items={data.navSecondary} className="mt-auto" />
             </SidebarContent>
-            <SidebarFooter>
+            <SidebarFooter className="flex gap-1 p-1">
+                <NavNotifications />
                 <NavUser />
             </SidebarFooter>
         </Sidebar>
