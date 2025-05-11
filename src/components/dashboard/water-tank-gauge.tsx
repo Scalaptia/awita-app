@@ -31,8 +31,8 @@ export function WaterTankGauge({
                     className={cn(
                         'inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ring-1 ring-inset',
                         isConnected
-                            ? 'bg-green-50 text-green-700 ring-green-600/20'
-                            : 'bg-red-50 text-red-700 ring-red-600/20'
+                            ? 'bg-green-50 text-green-700 ring-green-600/20 dark:bg-green-500/10 dark:text-green-400 dark:ring-green-500/20'
+                            : 'bg-red-50 text-red-700 ring-red-600/20 dark:bg-red-500/10 dark:text-red-400 dark:ring-red-500/20'
                     )}
                 >
                     {isConnected ? 'Conectado' : 'Desconectado'}

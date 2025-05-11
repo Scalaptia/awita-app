@@ -19,7 +19,8 @@ export function useSensorsQuery() {
         // Add retry logic with delay
         retry: 3,
         retryDelay: 1000,
-        staleTime: 1000 * 60 * 5 // 5 minutes
+        refetchInterval: 30 * 1000,
+        staleTime: 15 * 1000
     })
 }
 
@@ -153,6 +154,12 @@ export function useSensorHistoryQuery(
     timeRange?: '24h' | '7d' | '30d'
 ) {
     const { userId, isSignedIn } = useAuthStore()
+    const { data: sensor } = useSensorQuery(sensorId ?? '')
+
+    // Calculate refetch interval based on sensor settings
+    const refetchInterval = sensor?.time_between_readings
+        ? Math.max(sensor.time_between_readings * 1000, 60000)
+        : 60000 // Default 1 minute
 
     return useQuery({
         queryKey: ['sensorHistory', sensorId, timeRange],
@@ -160,6 +167,7 @@ export function useSensorHistoryQuery(
         enabled: !!userId && isSignedIn && !!sensorId,
         retry: 3,
         retryDelay: 1000,
-        staleTime: 1000 * 60 // 1 minute
+        refetchInterval,
+        staleTime: refetchInterval / 2
     })
 }

@@ -39,6 +39,13 @@ export function WaterLevelChart({
     const { data: historyData, isLoading: isHistoryLoading } =
         useSensorHistoryQuery(selectedSensor, timeRange)
 
+    // Get the selected sensor to access its time_between_readings
+    const selectedSensorData = sensors.find((s) => s.id === selectedSensor)
+    const updateInterval = selectedSensorData?.time_between_readings ?? 60
+
+    // Add loading indicator while refetching
+    const isRefetching = isLoading || isHistoryLoading
+
     // Format data for display with proper date handling
     const formattedData = (historyData ?? []).map((reading) => {
         const date = new Date(reading.created_at)
@@ -123,7 +130,7 @@ export function WaterLevelChart({
             </CardHeader>
             <CardContent>
                 <div className="w-full">
-                    {isLoading || isHistoryLoading ? (
+                    {isRefetching ? (
                         <div className="h-full w-full flex items-center justify-center">
                             <Loader2
                                 className="animate-spin text-muted-foreground"
@@ -209,6 +216,11 @@ export function WaterLevelChart({
                         </ChartContainer>
                     )}
                 </div>
+                {!isRefetching && (
+                    <div className="text-xs text-muted-foreground text-center mt-2">
+                        Actualizando cada {updateInterval} minutos
+                    </div>
+                )}
             </CardContent>
         </Card>
     )
