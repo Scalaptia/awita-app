@@ -1,5 +1,5 @@
 import { useAppStore } from '@/stores/AppStore'
-import { useSensorsQuery, useSensorHistoryQuery } from '@/lib/sensors-api'
+import { useSensorsQuery } from '@/lib/sensors-api'
 import { useState, useEffect } from 'react'
 import { WaterTankGauge } from '@/components/dashboard/water-tank-gauge'
 import { WaterLevelChart } from '@/components/dashboard/water-level-chart'
@@ -11,9 +11,6 @@ export default function Dashboard() {
     const setTitle = useAppStore((state: any) => state.setTitle)
     const { data: sensors, isLoading, error } = useSensorsQuery()
     const [selectedSensor, setSelectedSensor] = useState<string | null>(null)
-    const { data: historyData, isLoading: isHistoryLoading } =
-        useSensorHistoryQuery(selectedSensor, 100)
-
     // Select the first sensor by default when sensors are loaded
     useEffect(() => {
         if (sensors && sensors.length > 0 && !selectedSensor) {
@@ -70,7 +67,7 @@ export default function Dashboard() {
                                       <WaterTankGauge
                                           name={sensor.name}
                                           percentage={
-                                              sensor.water_level?.percentage ||
+                                              sensor.water_level?.percentage ??
                                               0
                                           }
                                           lastUpdated={
@@ -89,6 +86,7 @@ export default function Dashboard() {
                                                     )}L`
                                                   : undefined
                                           }
+                                          isConnected={sensor.status}
                                       />
                                   </div>
                               }
@@ -97,13 +95,11 @@ export default function Dashboard() {
             </div>
 
             {/* Historical chart */}
-            {sensors && sensors.length > 0 ? (
+            {sensors && sensors.length > 0 && selectedSensor ? (
                 <WaterLevelChart
                     sensors={sensors}
                     selectedSensor={selectedSensor}
                     onSensorChange={setSelectedSensor}
-                    data={historyData ?? []}
-                    isLoading={isHistoryLoading}
                 />
             ) : (
                 // Skeleton loading state

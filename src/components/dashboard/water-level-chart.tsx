@@ -25,8 +25,7 @@ type TimeRange = '24h' | '7d' | '30d'
 interface WaterLevelChartProps {
     sensors: Sensor[]
     selectedSensor: string | null
-    onSensorChange: (id: string) => void
-    data: SensorHistoryReading[]
+    onSensorChange: (s: string) => void
     isLoading?: boolean
 }
 
@@ -34,7 +33,6 @@ export function WaterLevelChart({
     sensors,
     selectedSensor,
     onSensorChange,
-    data,
     isLoading
 }: WaterLevelChartProps) {
     const [timeRange, setTimeRange] = useState<TimeRange>('24h')
@@ -42,7 +40,7 @@ export function WaterLevelChart({
         useSensorHistoryQuery(selectedSensor, timeRange)
 
     // Format data for display with proper date handling
-    const formattedData = (historyData || []).map((reading) => {
+    const formattedData = (historyData ?? []).map((reading) => {
         const date = new Date(reading.created_at)
         // Formato mejorado para el eje X según el rango
         let timeLabel

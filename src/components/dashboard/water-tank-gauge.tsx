@@ -15,7 +15,7 @@ export function WaterTankGauge({
     percentage,
     lastUpdated,
     approximateVolume,
-    isConnected = false,
+    isConnected,
     onClick
 }: WaterTankGaugeProps) {
     const displayPercentage = Math.round(percentage)
