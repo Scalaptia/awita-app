@@ -36,9 +36,9 @@ export default function Sensors() {
     }
 
     return (
-        <div className="px-6 py-1">
+        <div className="px-6">
             <SensorsTable
-                sensors={sensors || []}
+                sensors={sensors ?? []}
                 loading={isLoading}
                 onDelete={handleDelete}
                 onUpdate={handleUpdate}

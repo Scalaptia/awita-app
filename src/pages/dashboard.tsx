@@ -6,6 +6,9 @@ import { WaterLevelChart } from '@/components/dashboard/water-level-chart'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
 import { EditSensorDialog } from '@/components/sensors/edit-sensor-dialog'
+import { Button } from '@/components/ui/button'
+import { RegisterSensorDialog } from '@/components/sensors/register-sensor-dialog'
+import { PlusCircle } from 'lucide-react'
 
 export default function Dashboard() {
     const setTitle = useAppStore((state: any) => state.setTitle)
@@ -36,6 +39,26 @@ export default function Dashboard() {
                 {error instanceof Error
                     ? error.message
                     : 'Error al cargar los sensores'}
+            </div>
+        )
+    }
+
+    if (!isLoading && (!sensors || sensors.length === 0)) {
+        return (
+            <div className="px-6 flex flex-col items-center justify-center py-24 gap-4">
+                <h2 className="text-lg font-medium">
+                    No tienes sensores registrados
+                </h2>
+                <p className="text-muted-foreground text-sm text-center mb-4">
+                    Para comenzar a monitorear tus tanques de agua, registra tu
+                    primer sensor.
+                </p>
+                <RegisterSensorDialog>
+                    <Button>
+                        <PlusCircle className="mr-2 h-4 w-4" />
+                        Registrar Sensor
+                    </Button>
+                </RegisterSensorDialog>
             </div>
         )
     }

@@ -1,54 +1,45 @@
-# React + TypeScript + Vite
+<div align="center">
+  <img src="./public/logo.svg" alt="AWITA Logo" width="200" />
+</div>
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## 💧 Acerca del Proyecto
 
-Currently, two official plugins are available:
+AWITA es una aplicación web para monitorear tanques de agua en tiempo real. Permite a los usuarios visualizar niveles de agua, configurar alertas y gestionar múltiples sensores.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## ✨ Características
 
-## Expanding the ESLint configuration
+-   📊 Dashboard en tiempo real con visualización del nivel de agua
+-   📱 Diseño responsive y adaptable
+-   🔔 Sistema de notificaciones
+-   📈 Gráficas históricas de niveles
+-   🎛️ Gestión de múltiples sensores
+-   🌙 Modo oscuro/claro
+-   🔐 Autenticación segura con Clerk
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## 🛠️ Tecnologías
 
-```js
-export default tseslint.config({
-    extends: [
-        // Remove ...tseslint.configs.recommended and replace with this
-        ...tseslint.configs.recommendedTypeChecked,
-        // Alternatively, use this for stricter rules
-        ...tseslint.configs.strictTypeChecked,
-        // Optionally, add this for stylistic rules
-        ...tseslint.configs.stylisticTypeChecked
-    ],
-    languageOptions: {
-        // other options...
-        parserOptions: {
-            project: ['./tsconfig.node.json', './tsconfig.app.json'],
-            tsconfigRootDir: import.meta.dirname
-        }
-    }
-})
+-   [React](https://reactjs.org/)
+-   [TypeScript](https://www.typescriptlang.org/)
+-   [Vite](https://vitejs.dev/)
+-   [TailwindCSS](https://tailwindcss.com/)
+-   [Clerk](https://clerk.dev/)
+-   [React Query](https://tanstack.com/query/latest)
+-   [Zustand](https://zustand-demo.pmnd.rs/)
+-   [Recharts](https://recharts.org/)
+
+## 📝 Variables de Entorno
+
+```env
+VITE_CLERK_PUBLISHABLE_KEY=your_clerk_key
+VITE_API_URL=your_api_url
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## ⚖️ Licencia
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Este proyecto está bajo la licencia [CC-BY-NC-ND](https://creativecommons.org/licenses/by-nc-nd/4.0/) (Creative Commons - Atribución-NoComercial-SinDerivadas 4.0 Internacional). Esto significa que puedes:
 
-export default tseslint.config({
-    plugins: {
-        // Add the react-x and react-dom plugins
-        'react-x': reactX,
-        'react-dom': reactDom
-    },
-    rules: {
-        // other rules...
-        // Enable its recommended typescript rules
-        ...reactX.configs['recommended-typescript'].rules,
-        ...reactDom.configs.recommended.rules
-    }
-})
-```
+-   ✅ Compartir el material
+-   ✅ Usar el contenido para uso personal
+-   ❌ Uso comercial
+-   ❌ Modificación del material
+-   ⚠️ Requiere atribución al autor

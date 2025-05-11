@@ -10,9 +10,10 @@ import {
     SidebarFooter,
     SidebarHeader,
     SidebarMenu,
-    SidebarMenuItem
+    SidebarMenuItem,
+    useSidebar
 } from '@/components/ui/sidebar'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 
 const data = {
     navMain: [
@@ -37,6 +38,15 @@ const data = {
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+    const { isMobile, setOpenMobile } = useSidebar()
+    const location = useLocation()
+
+    React.useEffect(() => {
+        if (isMobile) {
+            setOpenMobile(false)
+        }
+    }, [location, isMobile, setOpenMobile])
+
     return (
         <Sidebar collapsible="offcanvas" {...props}>
             <SidebarHeader>

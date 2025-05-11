@@ -34,7 +34,7 @@ export function SensorsTable({
     if (loading) {
         return (
             <div>
-                <div className="flex items-center justify-between gap-4 py-4">
+                <div className="flex items-center justify-between gap-4 pb-4">
                     <div className="flex-1 max-w-sm">
                         <Input
                             disabled
@@ -81,9 +81,33 @@ export function SensorsTable({
         )
     }
 
+    if (!loading && (!sensors || sensors.length === 0)) {
+        return (
+            <div>
+                <div className="flex items-center justify-between gap-4 pb-4">
+                    <div className="flex-1 max-w-sm">
+                        <Input
+                            disabled
+                            placeholder="Filtrar sensores..."
+                            value={filter}
+                            onChange={(e) => setFilter(e.target.value)}
+                        />
+                    </div>
+                    <RegisterSensorDialog />
+                </div>
+                <div className="rounded-md border p-8 flex flex-col items-center justify-center gap-4">
+                    <p className="text-muted-foreground text-sm text-center">
+                        No tienes sensores registrados. Registra tu primer
+                        sensor para comenzar.
+                    </p>
+                </div>
+            </div>
+        )
+    }
+
     return (
         <div>
-            <div className="flex items-center justify-between gap-4 py-4">
+            <div className="flex items-center justify-between gap-4 pb-4">
                 <div className="flex-1 max-w-sm">
                     <Input
                         placeholder="Filtrar sensores..."

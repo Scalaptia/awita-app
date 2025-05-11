@@ -14,9 +14,7 @@ export function useSensorsQuery() {
     return useQuery({
         queryKey: queryKeys.sensors,
         queryFn: getSensors,
-        // Only execute query when auth is loaded and user is signed in
         enabled: isLoaded && !!userId && isSignedIn,
-        // Add retry logic with delay
         retry: 3,
         retryDelay: 1000,
         refetchInterval: 30 * 1000,
@@ -85,7 +83,6 @@ export function useCreateSensorMutation() {
     })
 }
 
-// Add a function to get a single sensor by ID
 export async function getSensor(id: string): Promise<Sensor> {
     return apiClient.get<Sensor>(`/sensors/${id}`)
 }
@@ -97,9 +94,7 @@ export function useSensorQuery(id: string) {
     return useQuery({
         queryKey: queryKeys.sensor(id),
         queryFn: () => getSensor(id),
-        // Only execute query when user is actually signed in
         enabled: !!userId && isSignedIn && !!id,
-        // Add retry logic with delay
         retry: 3,
         retryDelay: 1000,
         staleTime: 1000 * 60 * 5 // 5 minutes

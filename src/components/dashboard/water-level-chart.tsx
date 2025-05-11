@@ -43,8 +43,7 @@ export function WaterLevelChart({
     const selectedSensorData = sensors.find((s) => s.id === selectedSensor)
     const updateInterval = selectedSensorData?.time_between_readings ?? 60
 
-    // Add loading indicator while refetching
-    const isRefetching = isLoading || isHistoryLoading
+    const isRefetching = isLoading ?? isHistoryLoading
 
     // Format data for display with proper date handling
     const formattedData = (historyData ?? []).map((reading) => {

@@ -140,9 +140,7 @@ export function useHealthQuery() {
     return useQuery({
         queryKey: queryKeys.health,
         queryFn: checkHealth,
-        // Only execute when user is actually signed in
         enabled: !!userId && isSignedIn,
-        // Add retry logic
         retry: 3,
         retryDelay: 1000,
         staleTime: 1000 * 60 * 1 // 1 minute
