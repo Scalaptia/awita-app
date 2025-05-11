@@ -36,7 +36,7 @@ export function SensorTableRow({
             <TableCell className="font-medium truncate">
                 {sensor.name}
             </TableCell>
-            <TableCell className="truncate">{sensor.location || '-'}</TableCell>
+            <TableCell className="truncate">{sensor.location ?? '-'}</TableCell>
             <TableCell>
                 <span
                     className={cn(

@@ -18,8 +18,9 @@ import {
 } from '@/components/ui/select'
 import { ChartConfig, ChartContainer } from '@/components/ui/chart'
 import { Loader2 } from 'lucide-react'
+import { useSensorHistoryQuery } from '@/lib/sensors-api'
 
-type TimeRange = 'day' | 'month' | 'year'
+type TimeRange = '24h' | '7d' | '30d'
 
 interface WaterLevelChartProps {
     sensors: Sensor[]
@@ -36,36 +37,46 @@ export function WaterLevelChart({
     data,
     isLoading
 }: WaterLevelChartProps) {
-    const [timeRange, setTimeRange] = useState<TimeRange>('day')
+    const [timeRange, setTimeRange] = useState<TimeRange>('24h')
+    const { data: historyData, isLoading: isHistoryLoading } =
+        useSensorHistoryQuery(selectedSensor, timeRange)
 
     // Format data for display with proper date handling
-    const formattedData = data.map((reading) => {
+    const formattedData = (historyData || []).map((reading) => {
         const date = new Date(reading.created_at)
+        // Formato mejorado para el eje X según el rango
         let timeLabel
         switch (timeRange) {
-            case 'day':
+            case '24h':
                 timeLabel = date.toLocaleString('es-MX', {
                     hour: '2-digit',
                     minute: '2-digit'
                 })
                 break
-            case 'month':
+            case '7d':
+                timeLabel = date.toLocaleString('es-MX', {
+                    weekday: 'short',
+                    day: '2-digit'
+                })
+                break
+            case '30d':
                 timeLabel = date.toLocaleString('es-MX', {
                     day: '2-digit',
                     month: 'short'
                 })
                 break
-            case 'year':
-                timeLabel = date.toLocaleString('es-MX', {
-                    month: 'short',
-                    year: '2-digit'
-                })
-                break
         }
+
         return {
             time: timeLabel,
             nivel: reading.water_level?.percentage ?? 0,
-            timestamp: date.getTime() // para ordenamiento
+            tooltipTime: date.toLocaleString('es-MX', {
+                day: '2-digit',
+                month: 'short',
+                hour: '2-digit',
+                minute: '2-digit',
+                weekday: 'short'
+            })
         }
     })
 
@@ -106,15 +117,15 @@ export function WaterLevelChart({
                         <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="day">Día</SelectItem>
-                        <SelectItem value="month">Mes</SelectItem>
-                        <SelectItem value="year">Año</SelectItem>
+                        <SelectItem value="24h">Últimas 24 horas</SelectItem>
+                        <SelectItem value="7d">Últimos 7 días</SelectItem>
+                        <SelectItem value="30d">Últimos 30 días</SelectItem>
                     </SelectContent>
                 </Select>
             </CardHeader>
             <CardContent>
                 <div className="w-full">
-                    {isLoading ? (
+                    {isLoading || isHistoryLoading ? (
                         <div className="h-full w-full flex items-center justify-center">
                             <Loader2
                                 className="animate-spin text-muted-foreground"
@@ -128,8 +139,8 @@ export function WaterLevelChart({
                                     data={sortedData}
                                     margin={{
                                         top: 30,
-                                        right: 10,
-                                        left: 10,
+                                        right: 20,
+                                        left: 20,
                                         bottom: 0
                                     }}
                                 >
@@ -161,6 +172,11 @@ export function WaterLevelChart({
                                         }}
                                     />
                                     <Tooltip
+                                        labelFormatter={(value, items) => {
+                                            // Usar el valor directamente del punto de datos actual
+                                            const item = items?.[0]?.payload
+                                            return item?.tooltipTime ?? value
+                                        }}
                                         formatter={(value) => [
                                             `${value}%`,
                                             'Nivel de agua'

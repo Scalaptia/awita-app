@@ -136,19 +136,27 @@ export function useRegisterSensorMutation() {
 
 export async function getSensorHistory(
     sensorId: string,
+    timeRange?: '24h' | '7d' | '30d',
     limit = 50
 ): Promise<SensorHistoryReading[]> {
+    const params = new URLSearchParams()
+    if (timeRange) params.append('timeRange', timeRange)
+    if (limit) params.append('limit', limit.toString())
+
     return apiClient.get<SensorHistoryReading[]>(
-        `/sensors/${sensorId}/readings?limit=${limit}`
+        `/sensors/${sensorId}/readings?${params.toString()}`
     )
 }
 
-export function useSensorHistoryQuery(sensorId: string | null, limit = 50) {
+export function useSensorHistoryQuery(
+    sensorId: string | null,
+    timeRange?: '24h' | '7d' | '30d'
+) {
     const { userId, isSignedIn } = useAuthStore()
 
     return useQuery({
-        queryKey: ['sensorHistory', sensorId, limit],
-        queryFn: () => getSensorHistory(sensorId!, limit),
+        queryKey: ['sensorHistory', sensorId, timeRange],
+        queryFn: () => getSensorHistory(sensorId!, timeRange),
         enabled: !!userId && isSignedIn && !!sensorId,
         retry: 3,
         retryDelay: 1000,

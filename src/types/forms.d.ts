@@ -10,6 +10,7 @@ interface RegisterSensorForm {
 }
 
 interface EditSensorForm {
+    name: string
     location: string
     measurement_interval: number
 }

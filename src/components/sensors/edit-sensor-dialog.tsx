@@ -9,13 +9,14 @@ import {
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { updateSensor } from '@/lib/sensors-api'
+import { useUpdateSensorMutation } from '@/lib/sensors-api'
 import { Pencil } from 'lucide-react'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 
 interface EditSensorForm {
+    name: string
     location: string
     capacity: number
     height: number
@@ -34,25 +35,39 @@ export function EditSensorDialog({
     trigger
 }: EditSensorDialogProps) {
     const [open, setOpen] = useState(false)
+    const { mutate: updateSensor } = useUpdateSensorMutation()
     const {
         register,
         handleSubmit,
         formState: { errors, isSubmitting }
     } = useForm<EditSensorForm>({
         defaultValues: {
-            location: sensor.location || '',
+            name: sensor.name,
+            location: sensor.location ?? '',
             capacity: sensor.capacity,
             height: sensor.height ?? 0,
-            time_between_readings: sensor.time_between_readings || 5
+            time_between_readings: sensor.time_between_readings ?? 5
         }
     })
 
     const onSubmit = async (data: EditSensorForm) => {
         try {
-            const updated = await updateSensor(sensor.id, data)
-            onUpdate(updated)
-            setOpen(false)
-            toast.success('Sensor actualizado correctamente')
+            updateSensor(
+                {
+                    id: sensor.id,
+                    data
+                },
+                {
+                    onSuccess: (updated) => {
+                        setOpen(false)
+                        toast.success('Sensor actualizado correctamente')
+                    },
+                    onError: (error) => {
+                        toast.error('Error al actualizar el sensor')
+                        console.error('Failed to update sensor:', error)
+                    }
+                }
+            )
         } catch (error) {
             toast.error('Error al actualizar el sensor')
             console.error('Failed to update sensor:', error)
@@ -62,7 +77,7 @@ export function EditSensorDialog({
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                {trigger || (
+                {trigger ?? (
                     <Button variant="ghost" size="icon">
                         <Pencil className="h-4 w-4" />
                     </Button>
@@ -73,6 +88,20 @@ export function EditSensorDialog({
                     <DialogTitle>Editar Sensor: {sensor.name}</DialogTitle>
                 </DialogHeader>
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+                    <div className="space-y-2">
+                        <Label htmlFor="name">Nombre</Label>
+                        <Input
+                            id="name"
+                            placeholder="Nombre del sensor"
+                            aria-invalid={!!errors.name}
+                            {...register('name', { required: true })}
+                        />
+                        {errors.name?.type === 'required' && (
+                            <p className="text-sm text-red-500">
+                                El nombre es requerido
+                            </p>
+                        )}
+                    </div>
                     <div className="space-y-2">
                         <Label htmlFor="location">Ubicación</Label>
                         <Input
