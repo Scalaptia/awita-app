@@ -6,9 +6,7 @@ import { WaterLevelChart } from '@/components/dashboard/water-level-chart'
 import { formatDistanceToNow } from 'date-fns'
 import { es } from 'date-fns/locale'
 import { EditSensorDialog } from '@/components/sensors/edit-sensor-dialog'
-import { Button } from '@/components/ui/button'
 import { RegisterSensorDialog } from '@/components/sensors/register-sensor-dialog'
-import { PlusCircle } from 'lucide-react'
 
 export default function Dashboard() {
     const setTitle = useAppStore((state: any) => state.setTitle)
@@ -53,12 +51,7 @@ export default function Dashboard() {
                     Para comenzar a monitorear tus tanques de agua, registra tu
                     primer sensor.
                 </p>
-                <RegisterSensorDialog>
-                    <Button>
-                        <PlusCircle className="mr-2 h-4 w-4" />
-                        Registrar Sensor
-                    </Button>
-                </RegisterSensorDialog>
+                <RegisterSensorDialog />
             </div>
         )
     }
