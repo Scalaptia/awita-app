@@ -3,7 +3,7 @@ import { useSensorsQuery } from '@/lib/sensors-api'
 import { useState, useEffect } from 'react'
 import { WaterTankGauge } from '@/components/dashboard/water-tank-gauge'
 import { WaterLevelChart } from '@/components/dashboard/water-level-chart'
-import { format } from 'date-fns'
+import { formatDistanceToNow } from 'date-fns'
 import { es } from 'date-fns/locale'
 import { EditSensorDialog } from '@/components/sensors/edit-sensor-dialog'
 import { Button } from '@/components/ui/button'
@@ -25,12 +25,12 @@ export default function Dashboard() {
         setTitle('Panel de control')
     }, [setTitle])
 
-    // Format date for display
+    // Format date for display in a relative way
     const formatDate = (dateString: string) => {
-        const date = new Date(dateString)
-        return format(date, 'dd/MM/yyyy HH:mm', {
-            locale: es
-        })
+        return `hace ${formatDistanceToNow(new Date(dateString), {
+            locale: es,
+            addSuffix: false
+        })}`
     }
 
     if (error) {

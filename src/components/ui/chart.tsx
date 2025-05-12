@@ -41,7 +41,14 @@ export function ChartContainer({
     )
 }
 
-interface ChartTooltipContentProps extends TooltipProps<any, any> {
+interface ChartTooltipContentProps
+    extends Omit<
+        React.HTMLAttributes<HTMLDivElement>,
+        keyof TooltipProps<any, any>
+    > {
+    active?: boolean
+    payload?: any[]
+    label?: string
     config?: ChartConfig
     formatter?: (value: number) => string
     indicator?: 'bar' | 'line'

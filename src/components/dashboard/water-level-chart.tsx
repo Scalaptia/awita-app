@@ -80,7 +80,8 @@ export function WaterLevelChart({
                 hour: '2-digit',
                 minute: '2-digit',
                 weekday: 'short'
-            })
+            }),
+            timestamp: date.getTime()
         }
     })
 

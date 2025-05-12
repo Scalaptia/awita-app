@@ -1,5 +1,6 @@
 import { WaterTankGauge } from './water-tank-gauge'
-import { formatRelativeTime } from '@/lib/utils'
+import { formatDistanceToNow } from 'date-fns'
+import { es } from 'date-fns/locale'
 
 interface WaterLevelSummaryProps {
     sensors: Sensor[]
@@ -15,7 +16,13 @@ export function WaterLevelSummary({
             {sensors.map((sensor) => {
                 const lastReading = sensor.sensor_readings?.[0]
                 const lastUpdated = lastReading
-                    ? formatRelativeTime(new Date(lastReading.created_at))
+                    ? `hace ${formatDistanceToNow(
+                          new Date(lastReading.created_at),
+                          {
+                              locale: es,
+                              addSuffix: false
+                          }
+                      )}`
                     : 'No disponible'
 
                 return (
@@ -26,9 +33,9 @@ export function WaterLevelSummary({
                         lastUpdated={lastUpdated}
                         approximateVolume={
                             sensor.water_level
-                                ? `${sensor.water_level.currentLevel.toFixed(
-                                      1
-                                  )}L`
+                                ? `${Math.round(
+                                      sensor.water_level.currentLevel
+                                  )}`
                                 : undefined
                         }
                         isConnected={sensor.status}

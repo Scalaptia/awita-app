@@ -10,7 +10,7 @@ interface ThemeProviderProps {
 
 interface ThemeProviderState {
     theme: Theme
-    // eslint-disable-next-line no-unused-vars
+
     setTheme: (theme: Theme) => void
 }
 
@@ -24,8 +24,7 @@ const ThemeProviderContext = createContext<ThemeProviderState>(initialState)
 export function ThemeProvider({
     children,
     defaultTheme = 'system',
-    storageKey = 'vite-ui-theme',
-    ...props
+    storageKey = 'vite-ui-theme'
 }: ThemeProviderProps) {
     const [theme, setTheme] = useState<Theme>(
         () => (localStorage.getItem(storageKey) as Theme) || defaultTheme
@@ -59,11 +58,7 @@ export function ThemeProvider({
         }
     }
 
-    return (
-        <ThemeProviderContext {...props} value={value}>
-            {children}
-        </ThemeProviderContext>
-    )
+    return <ThemeProviderContext value={value}>{children}</ThemeProviderContext>
 }
 
 export const useTheme = () => {

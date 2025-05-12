@@ -2,8 +2,7 @@ import {
     LogInIcon,
     LogOutIcon,
     MoreVerticalIcon,
-    UserCircleIcon,
-    BellIcon
+    UserCircleIcon
 } from 'lucide-react'
 import { useClerk, useUser } from '@clerk/clerk-react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'

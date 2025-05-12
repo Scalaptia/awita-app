@@ -96,15 +96,16 @@ export function WaterTankGauge({
             </div>
 
             {/* Approximate volume text */}
-            {approximateVolume && (
-                <div className="text-xs text-muted-foreground mb-1">
-                    Aproximadamente {approximateVolume}
-                </div>
-            )}
+            <div className="text-sm text-foreground font-medium mb-1 min-h-[1.25rem]">
+                {/* \u00A0 works as a non-breaking space */}
+                {approximateVolume ? `${approximateVolume} litros` : '\u00A0'}
+            </div>
 
             {/* Last updated info */}
             <div className="text-xs text-muted-foreground">
-                Última Actualización: {lastUpdated}
+                {lastUpdated === 'Sin datos' || lastUpdated === 'No disponible'
+                    ? 'Sin datos'
+                    : `Actualizado ${lastUpdated}`}
             </div>
         </div>
     )

@@ -2,6 +2,8 @@ import { TableRow, TableCell } from '@/components/ui/table'
 import { EditSensorDialog } from '@/components/sensors/edit-sensor-dialog'
 import { DeleteSensorDialog } from './delete-sensor-dialog'
 import { cn } from '@/lib/utils'
+import { formatDistanceToNow } from 'date-fns'
+import { es } from 'date-fns/locale'
 
 interface SensorTableRowProps {
     sensor: Sensor
@@ -15,14 +17,29 @@ export function SensorTableRow({
     onUpdate
 }: SensorTableRowProps) {
     const getLatestReading = (sensor: Sensor) => {
-        if (!sensor.water_level) return 'Sin lecturas'
+        if (!sensor.water_level || !sensor.sensor_readings?.[0]) {
+            return <span className="text-muted-foreground">Sin lecturas</span>
+        }
+
+        const lastReading = sensor.sensor_readings[0]
+        const lastReadingDate = new Date(lastReading.created_at)
+        const timeAgo = formatDistanceToNow(lastReadingDate, {
+            locale: es,
+            addSuffix: false
+        })
+
         return (
-            <div className="space-y-1 truncate">
-                <div className="truncate">
-                    {sensor.water_level.currentLevel.toFixed(1)}L
+            <div className="flex flex-col space-y-1">
+                <div className="flex items-baseline gap-2">
+                    <span className="font-medium tabular-nums">
+                        {Math.round(sensor.water_level.currentLevel)}L
+                    </span>
+                    <span className="text-muted-foreground text-xs">
+                        {sensor.water_level.percentage.toFixed(0)}%
+                    </span>
                 </div>
-                <div className="text-muted-foreground text-xs truncate">
-                    {sensor.water_level.percentage.toFixed(1)}%
+                <div className="text-xs text-muted-foreground">
+                    hace {timeAgo}
                 </div>
             </div>
         )

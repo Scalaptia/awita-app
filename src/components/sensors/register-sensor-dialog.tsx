@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, type ReactNode } from 'react'
 import { useForm } from 'react-hook-form'
 import { Button } from '@/components/ui/button'
 import {
@@ -14,7 +14,11 @@ import { useRegisterSensorMutation } from '@/lib/sensors-api'
 import { PlusCircle } from 'lucide-react'
 import { toast } from 'sonner'
 
-export function RegisterSensorDialog() {
+interface RegisterSensorDialogProps {
+    children?: ReactNode
+}
+
+export function RegisterSensorDialog({ children }: RegisterSensorDialogProps) {
     const [open, setOpen] = useState(false)
     const { mutate: registerSensor, isPending } = useRegisterSensorMutation()
     const { register, handleSubmit, reset } = useForm<RegisterSensorForm>({
@@ -79,6 +83,7 @@ export function RegisterSensorDialog() {
                     </form>
                 </DialogContent>
             </Dialog>
+            {children}
         </>
     )
 }

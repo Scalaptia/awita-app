@@ -31,7 +31,8 @@ export default tseslint.config(
                 { allowConstantExport: true }
             ],
             ...reactX.configs['recommended-typescript'].rules,
-            ...reactDom.configs.recommended.rules
+            ...reactDom.configs.recommended.rules,
+            'no-unused-vars': 'off'
         },
         languageOptions: {
             // other options...

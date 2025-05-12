@@ -25,7 +25,7 @@ interface EditSensorForm {
 
 interface EditSensorDialogProps {
     sensor: Sensor
-    onUpdate: (updatedSensor: Sensor) => void
+    onUpdate?: (updated: Sensor) => void
     trigger?: React.ReactNode
 }
 
@@ -58,9 +58,12 @@ export function EditSensorDialog({
                     data
                 },
                 {
-                    onSuccess: (updated) => {
+                    onSuccess: () => {
                         setOpen(false)
                         toast.success('Sensor actualizado correctamente')
+                        if (onUpdate) {
+                            onUpdate({ ...sensor, ...data })
+                        }
                     },
                     onError: (error) => {
                         toast.error('Error al actualizar el sensor')
