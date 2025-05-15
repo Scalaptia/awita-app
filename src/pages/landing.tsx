@@ -10,6 +10,8 @@ import {
     Building2Icon
 } from 'lucide-react'
 import { WaterButton } from '../components/ui/water-button'
+import { useState } from 'react'
+import { ContactModal } from '../components/contact-modal'
 
 const fadeInUp = {
     initial: { opacity: 0, y: 20 },
@@ -26,8 +28,19 @@ const staggerContainer = {
 }
 
 export const LandingPage = () => {
+    const [showContactModal, setShowContactModal] = useState(false)
+
+    const handleContactClick = () => {
+        setShowContactModal(true)
+    }
+
     return (
         <div className="min-h-screen bg-gradient-to-b from-blue-50 via-white to-blue-50">
+            <ContactModal
+                isOpen={showContactModal}
+                onClose={() => setShowContactModal(false)}
+            />
+
             {/* Header */}
             <header className="absolute top-0 left-0 right-0 z-50">
                 <nav className="container mx-auto px-4 py-4 flex items-center justify-between">
@@ -446,7 +459,7 @@ export const LandingPage = () => {
                                         'Soporte técnico',
                                         'Nivel de agua de manera local'
                                     ],
-                                    buttonText: 'Comprar dispositivo'
+                                    buttonText: 'Comprar'
                                 },
                                 {
                                     name: 'Suscripción',
@@ -502,12 +515,7 @@ export const LandingPage = () => {
                                         <WaterButton
                                             variant="outline"
                                             className="w-full"
-                                            onClick={() => {
-                                                window.location.href =
-                                                    index === 0
-                                                        ? 'https://github.com/Scalaptia/awita-app'
-                                                        : 'mailto:fernando.haro.c@gmail.com'
-                                            }}
+                                            onClick={handleContactClick}
                                         >
                                             {plan.buttonText}
                                         </WaterButton>
