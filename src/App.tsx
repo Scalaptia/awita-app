@@ -5,15 +5,22 @@ import { Outlet } from 'react-router-dom'
 import { useAuth } from '@clerk/clerk-react'
 import { useAuthStore } from '@/stores/AuthStore'
 import { useEffect } from 'react'
+import { LandingPage } from '@/pages/landing'
 
 export default function App() {
     const { userId, isSignedIn, isLoaded } = useAuth()
     const setAuth = useAuthStore((state) => state.setAuth)
 
     useEffect(() => {
-        setAuth(userId, isSignedIn || false, isLoaded || false)
+        setAuth(userId, isSignedIn ?? false, isLoaded ?? false)
     }, [userId, isSignedIn, isLoaded, setAuth])
 
+    // Show landing page if not authenticated
+    if (isLoaded && !isSignedIn) {
+        return <LandingPage />
+    }
+
+    // Show loading state or authenticated app
     return (
         <SidebarProvider>
             <AppSidebar variant="inset" />

@@ -1,6 +1,7 @@
 import { useUser } from '@clerk/clerk-react'
 import { Loader2 } from 'lucide-react'
-import { Navigate, Outlet } from 'react-router-dom'
+import { Outlet } from 'react-router-dom'
+import { LandingPage } from '../pages/landing'
 
 export function ProtectedRoute() {
     const { isSignedIn, isLoaded } = useUser()
@@ -15,9 +16,9 @@ export function ProtectedRoute() {
         )
     }
 
-    // If user is not signed in, redirect to sign-in page
+    // If user is not signed in, show landing page
     if (!isSignedIn) {
-        return <Navigate to="/sign-in" replace />
+        return <LandingPage />
     }
 
     // If user is signed in, render the child routes

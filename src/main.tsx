@@ -10,8 +10,6 @@ import { ThemeProvider } from './components/theme-provider.tsx'
 import Dashboard from './pages/dashboard.tsx'
 import Notifications from './pages/notifications.tsx'
 import Sensors from './pages/sensors.tsx'
-import SignIn from './pages/sign-in.tsx'
-import SignUp from './pages/sign-up.tsx'
 import { ProtectedRoute } from './components/protected-route.tsx'
 import { Toaster } from 'sonner'
 
@@ -26,7 +24,7 @@ if (!PUBLISHABLE_KEY) {
 const clerkTheme = {
     baseTheme: dark,
     variables: {
-        colorPrimary: '#1e293b',
+        colorPrimary: '#2563eb',
         colorBackground: '#0f172a',
         colorText: '#f8fafc',
         colorInputText: '#FAFBFF',
@@ -211,10 +209,6 @@ createRoot(document.getElementById('root')!).render(
                         storageKey="vite-ui-theme"
                     >
                         <Routes>
-                            {/* Public routes */}
-                            <Route path="/sign-in" element={<SignIn />} />
-                            <Route path="/sign-up" element={<SignUp />} />
-
                             {/* Protected routes */}
                             <Route element={<ProtectedRoute />}>
                                 <Route element={<App />}>
