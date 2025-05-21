@@ -190,7 +190,7 @@ export const LandingPage = () => {
                 id="demo"
                 className="py-24 sm:py-32 bg-white relative overflow-hidden"
             >
-                <div className="absolute inset-0 bg-gradient-to-b from-blue-50/50 to-transparent" />
+                <div className="absolute inset-0" />
                 <div className="container mx-auto px-4">
                     <div className="max-w-7xl mx-auto">
                         <div className="grid lg:grid-cols-2 gap-12 items-center">
@@ -414,7 +414,7 @@ export const LandingPage = () => {
             {/* Pricing Section */}
             <div id="precios" className="py-24 sm:py-32 bg-white">
                 <div className="mx-auto max-w-7xl px-6 lg:px-8">
-                    <div className="mx-auto max-w-2xl lg:text-center mb-16">
+                    <div className="text-center space-y-4 mb-16">
                         <motion.h2
                             initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}
