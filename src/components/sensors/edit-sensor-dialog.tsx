@@ -4,8 +4,7 @@ import {
     DialogContent,
     DialogHeader,
     DialogTitle,
-    DialogTrigger,
-    DialogFooter
+    DialogTrigger
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -14,6 +13,8 @@ import { Pencil } from 'lucide-react'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
+import { NotificationSettingsForm } from './notification-settings-form'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 interface EditSensorForm {
     name: string
@@ -59,7 +60,6 @@ export function EditSensorDialog({
                 },
                 {
                     onSuccess: () => {
-                        setOpen(false)
                         toast.success('Sensor actualizado correctamente')
                         if (onUpdate) {
                             onUpdate({ ...sensor, ...data })
@@ -86,102 +86,125 @@ export function EditSensorDialog({
                     </Button>
                 )}
             </DialogTrigger>
-            <DialogContent>
-                <DialogHeader className="mb-4">
+            <DialogContent className="max-w-2xl">
+                <DialogHeader>
                     <DialogTitle>Editar Sensor: {sensor.name}</DialogTitle>
                 </DialogHeader>
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-                    <div className="space-y-2">
-                        <Label htmlFor="name">Nombre</Label>
-                        <Input
-                            id="name"
-                            placeholder="Nombre del sensor"
-                            aria-invalid={!!errors.name}
-                            {...register('name', { required: true })}
-                        />
-                        {errors.name?.type === 'required' && (
-                            <p className="text-sm text-red-500">
-                                El nombre es requerido
-                            </p>
-                        )}
-                    </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="location">Ubicación</Label>
-                        <Input
-                            id="location"
-                            placeholder="Ubicación del sensor"
-                            aria-invalid={!!errors.location}
-                            {...register('location')}
-                        />
-                    </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="capacity">Capacidad (L)</Label>
-                        <Input
-                            id="capacity"
-                            type="number"
-                            aria-invalid={!!errors.capacity}
-                            {...register('capacity', {
-                                valueAsNumber: true,
-                                required: true,
-                                min: 1
-                            })}
-                        />
-                        {errors.capacity?.type === 'min' && (
-                            <p className="text-sm text-red-500">
-                                La capacidad mínima es 1
-                            </p>
-                        )}
-                    </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="height">Altura (cm)</Label>
-                        <Input
-                            id="height"
-                            type="number"
-                            aria-invalid={!!errors.height}
-                            {...register('height', {
-                                valueAsNumber: true,
-                                required: true,
-                                min: 0
-                            })}
-                        />
-                        {errors.height?.type === 'min' && (
-                            <p className="text-sm text-red-500">
-                                La altura no puede ser negativa
-                            </p>
-                        )}
-                    </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="time_between_readings">
-                            Intervalo de Medición (minutos)
-                        </Label>
-                        <Input
-                            id="time_between_readings"
-                            type="number"
-                            aria-invalid={!!errors.time_between_readings}
-                            {...register('time_between_readings', {
-                                valueAsNumber: true,
-                                required: true,
-                                min: 1,
-                                max: 1440 // 24 hours in minutes
-                            })}
-                        />
-                        {errors.time_between_readings?.type === 'min' && (
-                            <p className="text-sm text-red-500">
-                                El intervalo mínimo es 1 minuto
-                            </p>
-                        )}
-                        {errors.time_between_readings?.type === 'max' && (
-                            <p className="text-sm text-red-500">
-                                El intervalo máximo es 24 horas
-                            </p>
-                        )}
-                    </div>
-                    <DialogFooter>
-                        <Button type="submit" disabled={isSubmitting}>
-                            {isSubmitting ? 'Guardando...' : 'Guardar'}
-                        </Button>
-                    </DialogFooter>
-                </form>
+
+                <Tabs defaultValue="details" className="mt-4">
+                    <TabsList className="grid w-full grid-cols-2">
+                        <TabsTrigger value="details">Detalles</TabsTrigger>
+                        <TabsTrigger value="notifications">
+                            Notificaciones
+                        </TabsTrigger>
+                    </TabsList>
+
+                    <TabsContent value="details" className="mt-4">
+                        <form
+                            onSubmit={handleSubmit(onSubmit)}
+                            className="space-y-4"
+                        >
+                            <div className="space-y-2">
+                                <Label htmlFor="name">Nombre</Label>
+                                <Input
+                                    id="name"
+                                    placeholder="Nombre del sensor"
+                                    aria-invalid={!!errors.name}
+                                    {...register('name', { required: true })}
+                                />
+                                {errors.name?.type === 'required' && (
+                                    <p className="text-sm text-red-500">
+                                        El nombre es requerido
+                                    </p>
+                                )}
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="location">Ubicación</Label>
+                                <Input
+                                    id="location"
+                                    placeholder="Ubicación del sensor"
+                                    aria-invalid={!!errors.location}
+                                    {...register('location')}
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="capacity">Capacidad (L)</Label>
+                                <Input
+                                    id="capacity"
+                                    type="number"
+                                    aria-invalid={!!errors.capacity}
+                                    {...register('capacity', {
+                                        valueAsNumber: true,
+                                        required: true,
+                                        min: 1
+                                    })}
+                                />
+                                {errors.capacity?.type === 'min' && (
+                                    <p className="text-sm text-red-500">
+                                        La capacidad mínima es 1
+                                    </p>
+                                )}
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="height">Altura (cm)</Label>
+                                <Input
+                                    id="height"
+                                    type="number"
+                                    aria-invalid={!!errors.height}
+                                    {...register('height', {
+                                        valueAsNumber: true,
+                                        required: true,
+                                        min: 0
+                                    })}
+                                />
+                                {errors.height?.type === 'min' && (
+                                    <p className="text-sm text-red-500">
+                                        La altura no puede ser negativa
+                                    </p>
+                                )}
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="time_between_readings">
+                                    Intervalo de Medición (minutos)
+                                </Label>
+                                <Input
+                                    id="time_between_readings"
+                                    type="number"
+                                    aria-invalid={
+                                        !!errors.time_between_readings
+                                    }
+                                    {...register('time_between_readings', {
+                                        valueAsNumber: true,
+                                        required: true,
+                                        min: 1,
+                                        max: 1440 // 24 hours in minutes
+                                    })}
+                                />
+                                {errors.time_between_readings?.type ===
+                                    'min' && (
+                                    <p className="text-sm text-red-500">
+                                        El intervalo mínimo es 1 minuto
+                                    </p>
+                                )}
+                                {errors.time_between_readings?.type ===
+                                    'max' && (
+                                    <p className="text-sm text-red-500">
+                                        El intervalo máximo es 24 horas
+                                    </p>
+                                )}
+                            </div>
+                            <div className="flex justify-end">
+                                <Button type="submit" disabled={isSubmitting}>
+                                    {isSubmitting ? 'Guardando...' : 'Guardar'}
+                                </Button>
+                            </div>
+                        </form>
+                    </TabsContent>
+
+                    <TabsContent value="notifications" className="mt-4">
+                        <NotificationSettingsForm sensorId={sensor.id} />
+                    </TabsContent>
+                </Tabs>
             </DialogContent>
         </Dialog>
     )
