@@ -62,7 +62,7 @@ export function SensorsTable({
                                 <TableHead className="w-[160px]">
                                     Intervalo
                                 </TableHead>
-                                <TableHead className="w-[120px]">
+                                <TableHead className="w-[150px]">
                                     Última lectura
                                 </TableHead>
                                 <TableHead className="w-[100px]"></TableHead>
@@ -130,7 +130,7 @@ export function SensorsTable({
                             <TableHead className="w-[160px]">
                                 Intervalo
                             </TableHead>
-                            <TableHead className="w-[120px]">
+                            <TableHead className="w-[150px]">
                                 Última lectura
                             </TableHead>
                             <TableHead className="w-[100px]"></TableHead>

@@ -7,7 +7,6 @@ interface WaterTankGaugeProps {
     lastUpdated: string
     approximateVolume?: string
     isConnected?: boolean
-    onClick?: () => void
 }
 
 export function WaterTankGauge({
@@ -15,16 +14,12 @@ export function WaterTankGauge({
     percentage,
     lastUpdated,
     approximateVolume,
-    isConnected,
-    onClick
+    isConnected
 }: WaterTankGaugeProps) {
     const displayPercentage = Math.round(percentage)
 
     return (
-        <div
-            className="flex flex-col items-center p-4 rounded-lg bg-card text-card-foreground cursor-pointer hover:shadow-md transition-shadow"
-            onClick={onClick}
-        >
+        <div className="flex flex-col items-center p-4 rounded-lg bg-card text-card-foreground hover:shadow-md transition-shadow">
             <div className="w-full flex items-center justify-between mb-4">
                 <h3 className="font-medium">{name}</h3>
                 <span

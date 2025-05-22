@@ -75,37 +75,25 @@ export default function Dashboard() {
                               </div>
                           ))
                     : sensors?.map((sensor) => (
-                          <EditSensorDialog
+                          <WaterTankGauge
                               key={sensor.id}
-                              sensor={sensor}
-                              trigger={
-                                  <div className="cursor-pointer">
-                                      <WaterTankGauge
-                                          name={sensor.name}
-                                          percentage={
-                                              sensor.water_level?.percentage ??
-                                              0
-                                          }
-                                          lastUpdated={
-                                              sensor.sensor_readings?.length
-                                                  ? formatDate(
-                                                        sensor
-                                                            .sensor_readings[0]
-                                                            .created_at
-                                                    )
-                                                  : 'Sin datos'
-                                          }
-                                          approximateVolume={
-                                              sensor.water_level
-                                                  ? `${sensor.water_level.currentLevel.toFixed(
-                                                        0
-                                                    )}L`
-                                                  : undefined
-                                          }
-                                          isConnected={sensor.status}
-                                      />
-                                  </div>
+                              name={sensor.name}
+                              percentage={sensor.water_level?.percentage ?? 0}
+                              lastUpdated={
+                                  sensor.sensor_readings?.length
+                                      ? formatDate(
+                                            sensor.sensor_readings[0].created_at
+                                        )
+                                      : 'Sin datos'
                               }
+                              approximateVolume={
+                                  sensor.water_level
+                                      ? `${sensor.water_level.currentLevel.toFixed(
+                                            0
+                                        )}L`
+                                      : undefined
+                              }
+                              isConnected={sensor.status}
                           />
                       ))}
             </div>

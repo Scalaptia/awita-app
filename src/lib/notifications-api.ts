@@ -1,6 +1,7 @@
 import { useAuthStore } from '@/stores/AuthStore'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { apiClient } from '@/lib/api'
+import { NotificationSetting } from '@/types/notification'
 
 export const notificationQueryKeys = {
     all: ['notifications'],
@@ -48,7 +49,7 @@ export function useNotificationSettingQuery(id: string) {
 }
 
 export async function createNotificationSetting(
-    data: CreateNotificationSettingDto
+    data: Partial<NotificationSetting>
 ): Promise<NotificationSetting> {
     return apiClient.post<NotificationSetting>('/notification-settings', data)
 }
@@ -69,7 +70,7 @@ export function useCreateNotificationSettingMutation() {
 
 export async function updateNotificationSetting(
     id: string,
-    data: UpdateNotificationSettingDto
+    data: Partial<NotificationSetting>
 ): Promise<NotificationSetting> {
     return apiClient.patch<NotificationSetting>(
         `/notification-settings/${id}`,
@@ -87,7 +88,7 @@ export function useUpdateNotificationSettingMutation() {
             data
         }: {
             id: string
-            data: UpdateNotificationSettingDto
+            data: Partial<NotificationSetting>
         }) => updateNotificationSetting(id, data),
         onSuccess: (updatedSetting) => {
             queryClient.invalidateQueries({

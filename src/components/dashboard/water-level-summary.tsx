@@ -4,13 +4,9 @@ import { es } from 'date-fns/locale'
 
 interface WaterLevelSummaryProps {
     sensors: Sensor[]
-    onSensorClick?: (sensorId: string) => void
 }
 
-export function WaterLevelSummary({
-    sensors,
-    onSensorClick
-}: WaterLevelSummaryProps) {
+export function WaterLevelSummary({ sensors }: WaterLevelSummaryProps) {
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {sensors.map((sensor) => {
@@ -39,7 +35,6 @@ export function WaterLevelSummary({
                                 : undefined
                         }
                         isConnected={sensor.status}
-                        onClick={() => onSensorClick?.(sensor.id)}
                     />
                 )
             })}
