@@ -222,3 +222,34 @@ export function useToggleDisconnectionAlertMutation() {
         }
     })
 }
+
+export async function updateWaterLevelThreshold(
+    sensorId: string,
+    threshold: number
+): Promise<SensorWithAlerts> {
+    return apiClient.patch<SensorWithAlerts>(
+        `/sensors/${sensorId}/water-level-threshold`,
+        { threshold }
+    )
+}
+
+export function useUpdateWaterLevelThresholdMutation() {
+    const queryClient = useQueryClient()
+
+    return useMutation({
+        mutationFn: ({
+            sensorId,
+            threshold
+        }: {
+            sensorId: string
+            threshold: number
+        }) => updateWaterLevelThreshold(sensorId, threshold),
+        onSuccess: (updatedSensor) => {
+            queryClient.invalidateQueries({ queryKey: queryKeys.sensors })
+            queryClient.setQueryData(
+                queryKeys.sensor(updatedSensor.id),
+                updatedSensor
+            )
+        }
+    })
+}

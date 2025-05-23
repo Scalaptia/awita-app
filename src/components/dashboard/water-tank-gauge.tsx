@@ -3,7 +3,7 @@ import Wave from 'react-wavify'
 import { Settings, Bell } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { EditSensorDialog } from '@/components/sensors/edit-sensor-dialog'
-import { AlertsForm } from '@/components/sensors/alerts-form'
+import { EditAlertsDialog } from '@/components/sensors/edit-alerts-dialog'
 import {
     Dialog,
     DialogContent,
@@ -11,6 +11,7 @@ import {
     DialogTitle,
     DialogTrigger
 } from '@/components/ui/dialog'
+import { useState } from 'react'
 
 interface WaterTankGaugeProps {
     sensor: Sensor
@@ -30,13 +31,17 @@ export function WaterTankGauge({
     onUpdate
 }: WaterTankGaugeProps) {
     const displayPercentage = Math.round(percentage)
+    const [alertsDialogOpen, setAlertsDialogOpen] = useState(false)
 
     return (
         <div className="flex flex-col items-center p-4 rounded-lg bg-card text-card-foreground hover:shadow-md transition-shadow">
             <div className="w-full flex items-center justify-between mb-4">
                 <h3 className="font-medium">{sensor.name}</h3>
                 <div className="flex items-center gap-2">
-                    <Dialog>
+                    <Dialog
+                        open={alertsDialogOpen}
+                        onOpenChange={setAlertsDialogOpen}
+                    >
                         <DialogTrigger asChild>
                             <Button
                                 variant="ghost"
@@ -49,10 +54,13 @@ export function WaterTankGauge({
                         <DialogContent className="max-w-2xl">
                             <DialogHeader>
                                 <DialogTitle>
-                                    Notificaciones: {sensor.name}
+                                    Alertas: {sensor.name}
                                 </DialogTitle>
                             </DialogHeader>
-                            <AlertsForm sensorId={sensor.id} />
+                            <EditAlertsDialog
+                                sensorId={sensor.id}
+                                onClose={() => setAlertsDialogOpen(false)}
+                            />
                         </DialogContent>
                     </Dialog>
                     <EditSensorDialog

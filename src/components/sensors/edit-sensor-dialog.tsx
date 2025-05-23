@@ -8,9 +8,15 @@ import {
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger
+} from '@/components/ui/tooltip'
 import { useUpdateSensorMutation } from '@/lib/sensors-api'
 import { Pencil } from 'lucide-react'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 
@@ -34,11 +40,12 @@ export function EditSensorDialog({
     trigger
 }: EditSensorDialogProps) {
     const [open, setOpen] = useState(false)
-    const { mutate: updateSensor } = useUpdateSensorMutation()
+    const { mutateAsync: updateSensor } = useUpdateSensorMutation()
     const {
         register,
         handleSubmit,
-        formState: { errors, isSubmitting }
+        reset,
+        formState: { errors, isSubmitting, isDirty }
     } = useForm<EditSensorForm>({
         defaultValues: {
             name: sensor.name,
@@ -49,26 +56,29 @@ export function EditSensorDialog({
         }
     })
 
+    // Reset form when sensor changes or modal opens/closes
+    useEffect(() => {
+        reset({
+            name: sensor.name,
+            location: sensor.location ?? '',
+            capacity: sensor.capacity,
+            height: sensor.height ?? 0,
+            time_between_readings: sensor.time_between_readings ?? 5
+        })
+    }, [sensor, open, reset])
+
     const onSubmit = async (data: EditSensorForm) => {
         try {
-            updateSensor(
-                {
-                    id: sensor.id,
-                    data
-                },
-                {
-                    onSuccess: () => {
-                        toast.success('Sensor actualizado correctamente')
-                        if (onUpdate) {
-                            onUpdate({ ...sensor, ...data })
-                        }
-                    },
-                    onError: (error) => {
-                        toast.error('Error al actualizar el sensor')
-                        console.error('Failed to update sensor:', error)
-                    }
-                }
-            )
+            const updated = await updateSensor({
+                id: sensor.id,
+                data
+            })
+
+            toast.success('Sensor actualizado correctamente')
+            if (onUpdate) {
+                onUpdate(updated)
+            }
+            setOpen(false)
         } catch (error) {
             toast.error('Error al actualizar el sensor')
             console.error('Failed to update sensor:', error)
@@ -92,92 +102,169 @@ export function EditSensorDialog({
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                     <div className="space-y-2">
                         <Label htmlFor="name">Nombre</Label>
-                        <Input
-                            id="name"
-                            placeholder="Nombre del sensor"
-                            aria-invalid={!!errors.name}
-                            {...register('name', { required: true })}
-                        />
-                        {errors.name?.type === 'required' && (
-                            <p className="text-sm text-red-500">
-                                El nombre es requerido
-                            </p>
-                        )}
+                        <TooltipProvider>
+                            <Tooltip open={!!errors.name}>
+                                <TooltipTrigger asChild>
+                                    <Input
+                                        id="name"
+                                        placeholder="Nombre del sensor"
+                                        className={
+                                            errors.name ? 'border-red-500' : ''
+                                        }
+                                        {...register('name', {
+                                            required: 'El nombre es requerido'
+                                        })}
+                                    />
+                                </TooltipTrigger>
+                                {errors.name && (
+                                    <TooltipContent
+                                        side="right"
+                                        className="bg-destructive text-destructive-foreground"
+                                    >
+                                        <p>{errors.name.message}</p>
+                                    </TooltipContent>
+                                )}
+                            </Tooltip>
+                        </TooltipProvider>
                     </div>
+
                     <div className="space-y-2">
                         <Label htmlFor="location">Ubicación</Label>
                         <Input
                             id="location"
                             placeholder="Ubicación del sensor"
-                            aria-invalid={!!errors.location}
                             {...register('location')}
                         />
                     </div>
+
                     <div className="space-y-2">
                         <Label htmlFor="capacity">Capacidad (L)</Label>
-                        <Input
-                            id="capacity"
-                            type="number"
-                            aria-invalid={!!errors.capacity}
-                            {...register('capacity', {
-                                valueAsNumber: true,
-                                required: true,
-                                min: 1
-                            })}
-                        />
-                        {errors.capacity?.type === 'min' && (
-                            <p className="text-sm text-red-500">
-                                La capacidad mínima es 1
-                            </p>
-                        )}
+                        <TooltipProvider>
+                            <Tooltip open={!!errors.capacity}>
+                                <TooltipTrigger asChild>
+                                    <Input
+                                        id="capacity"
+                                        type="number"
+                                        className={
+                                            errors.capacity
+                                                ? 'border-red-500'
+                                                : ''
+                                        }
+                                        {...register('capacity', {
+                                            valueAsNumber: true,
+                                            required:
+                                                'La capacidad es requerida',
+                                            min: {
+                                                value: 1,
+                                                message:
+                                                    'La capacidad mínima es 1'
+                                            }
+                                        })}
+                                    />
+                                </TooltipTrigger>
+                                {errors.capacity && (
+                                    <TooltipContent
+                                        side="right"
+                                        className="bg-destructive text-destructive-foreground"
+                                    >
+                                        <p>{errors.capacity.message}</p>
+                                    </TooltipContent>
+                                )}
+                            </Tooltip>
+                        </TooltipProvider>
                     </div>
+
                     <div className="space-y-2">
                         <Label htmlFor="height">Altura (cm)</Label>
-                        <Input
-                            id="height"
-                            type="number"
-                            aria-invalid={!!errors.height}
-                            {...register('height', {
-                                valueAsNumber: true,
-                                required: true,
-                                min: 0
-                            })}
-                        />
-                        {errors.height?.type === 'min' && (
-                            <p className="text-sm text-red-500">
-                                La altura no puede ser negativa
-                            </p>
-                        )}
+                        <TooltipProvider>
+                            <Tooltip open={!!errors.height}>
+                                <TooltipTrigger asChild>
+                                    <Input
+                                        id="height"
+                                        type="number"
+                                        className={
+                                            errors.height
+                                                ? 'border-red-500'
+                                                : ''
+                                        }
+                                        {...register('height', {
+                                            valueAsNumber: true,
+                                            required: 'La altura es requerida',
+                                            min: {
+                                                value: 0,
+                                                message:
+                                                    'La altura no puede ser negativa'
+                                            }
+                                        })}
+                                    />
+                                </TooltipTrigger>
+                                {errors.height && (
+                                    <TooltipContent
+                                        side="right"
+                                        className="bg-destructive text-destructive-foreground"
+                                    >
+                                        <p>{errors.height.message}</p>
+                                    </TooltipContent>
+                                )}
+                            </Tooltip>
+                        </TooltipProvider>
                     </div>
+
                     <div className="space-y-2">
                         <Label htmlFor="time_between_readings">
                             Intervalo de Medición (minutos)
                         </Label>
-                        <Input
-                            id="time_between_readings"
-                            type="number"
-                            aria-invalid={!!errors.time_between_readings}
-                            {...register('time_between_readings', {
-                                valueAsNumber: true,
-                                required: true,
-                                min: 1,
-                                max: 1440 // 24 hours in minutes
-                            })}
-                        />
-                        {errors.time_between_readings?.type === 'min' && (
-                            <p className="text-sm text-red-500">
-                                El intervalo mínimo es 1 minuto
-                            </p>
-                        )}
-                        {errors.time_between_readings?.type === 'max' && (
-                            <p className="text-sm text-red-500">
-                                El intervalo máximo es 24 horas
-                            </p>
-                        )}
+                        <TooltipProvider>
+                            <Tooltip open={!!errors.time_between_readings}>
+                                <TooltipTrigger asChild>
+                                    <Input
+                                        id="time_between_readings"
+                                        type="number"
+                                        className={
+                                            errors.time_between_readings
+                                                ? 'border-red-500'
+                                                : ''
+                                        }
+                                        {...register('time_between_readings', {
+                                            valueAsNumber: true,
+                                            required:
+                                                'El intervalo es requerido',
+                                            min: {
+                                                value: 1,
+                                                message:
+                                                    'El intervalo mínimo es 1 minuto'
+                                            },
+                                            max: {
+                                                value: 1440,
+                                                message:
+                                                    'El intervalo máximo es 24 horas'
+                                            }
+                                        })}
+                                    />
+                                </TooltipTrigger>
+                                {errors.time_between_readings && (
+                                    <TooltipContent
+                                        side="right"
+                                        className="bg-destructive text-destructive-foreground"
+                                    >
+                                        <p>
+                                            {
+                                                errors.time_between_readings
+                                                    .message
+                                            }
+                                        </p>
+                                    </TooltipContent>
+                                )}
+                            </Tooltip>
+                        </TooltipProvider>
                     </div>
+
                     <div className="flex justify-end">
-                        <Button type="submit" disabled={isSubmitting}>
-                            {isSubmitting ? 'Guardando...' : 'Guardar'}
+                        <Button
+                            type="submit"
+                            disabled={!isDirty || isSubmitting}
+                        >
+                            Guardar
                         </Button>
                     </div>
                 </form>
