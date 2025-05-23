@@ -83,15 +83,15 @@ export function useCreateSensorMutation() {
     })
 }
 
-export async function getSensor(id: string): Promise<Sensor> {
-    return apiClient.get<Sensor>(`/sensors/${id}`)
+export async function getSensor(id: string): Promise<SensorWithAlerts> {
+    return apiClient.get<SensorWithAlerts>(`/sensors/${id}`)
 }
 
 // Single sensor query hook
 export function useSensorQuery(id: string) {
     const { userId, isSignedIn } = useAuthStore()
 
-    return useQuery({
+    return useQuery<SensorWithAlerts>({
         queryKey: queryKeys.sensor(id),
         queryFn: () => getSensor(id),
         enabled: !!userId && isSignedIn && !!id,
@@ -101,9 +101,11 @@ export function useSensorQuery(id: string) {
     })
 }
 
-export async function registerSensor(sensor_id: string): Promise<Sensor> {
+export async function registerSensor(
+    sensor_id: string
+): Promise<SensorWithAlerts> {
     try {
-        return await apiClient.post<Sensor>('/sensors', { sensor_id })
+        return await apiClient.post<SensorWithAlerts>('/sensors', { sensor_id })
     } catch (error) {
         if (error instanceof ApiError) {
             const message =
@@ -164,5 +166,59 @@ export function useSensorHistoryQuery(
         retryDelay: 1000,
         refetchInterval,
         staleTime: refetchInterval / 2
+    })
+}
+
+// Toggle water level alert
+export async function toggleWaterLevelAlert(
+    sensorId: string
+): Promise<SensorWithAlerts> {
+    return apiClient.patch<SensorWithAlerts>(
+        `/sensors/${sensorId}/water-level-alert`,
+        {}
+    )
+}
+
+export function useToggleWaterLevelAlertMutation() {
+    const queryClient = useQueryClient()
+
+    return useMutation({
+        mutationFn: toggleWaterLevelAlert,
+        onSuccess: (updatedSensor) => {
+            queryClient.invalidateQueries({
+                queryKey: queryKeys.sensors
+            })
+            queryClient.setQueryData(
+                queryKeys.sensor(updatedSensor.id),
+                updatedSensor
+            )
+        }
+    })
+}
+
+// Toggle disconnection alert
+export async function toggleDisconnectionAlert(
+    sensorId: string
+): Promise<SensorWithAlerts> {
+    return apiClient.patch<SensorWithAlerts>(
+        `/sensors/${sensorId}/disconnection-alert`,
+        {}
+    )
+}
+
+export function useToggleDisconnectionAlertMutation() {
+    const queryClient = useQueryClient()
+
+    return useMutation({
+        mutationFn: toggleDisconnectionAlert,
+        onSuccess: (updatedSensor) => {
+            queryClient.invalidateQueries({
+                queryKey: queryKeys.sensors
+            })
+            queryClient.setQueryData(
+                queryKeys.sensor(updatedSensor.id),
+                updatedSensor
+            )
+        }
     })
 }

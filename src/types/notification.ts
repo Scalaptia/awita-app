@@ -10,26 +10,14 @@ export enum ThresholdType {
 
 export interface NotificationSetting {
     id: string
+    user_id: string
     sensor_id: string
-    notification_type: NotificationType
-    threshold_type: ThresholdType
-    threshold_value: number
-    is_active: boolean
-    created_at: string
-    updated_at: string
-}
-
-export interface CreateNotificationSettingDto {
-    sensor_id: string
-    notification_type: NotificationType
-    threshold_type: ThresholdType
-    threshold_value: number
-    is_active?: boolean
-}
-
-export interface UpdateNotificationSettingDto {
-    notification_type?: NotificationType
-    threshold_type?: ThresholdType
-    threshold_value?: number
-    is_active?: boolean
+    water_level_alert: boolean
+    disconnection_alert: boolean
+    water_level_threshold: number | null
+    disconnection_threshold: number | null
+    last_water_notification: Date | null
+    last_disconnection_notification: Date | null
+    notification_method: 'EMAIL' | 'SMS'
+    cooldown_minutes: number
 }

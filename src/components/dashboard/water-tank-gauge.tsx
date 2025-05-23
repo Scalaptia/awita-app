@@ -3,7 +3,7 @@ import Wave from 'react-wavify'
 import { Settings, Bell } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { EditSensorDialog } from '@/components/sensors/edit-sensor-dialog'
-import { NotificationSettingsForm } from '@/components/sensors/notification-settings-form'
+import { AlertsForm } from '@/components/sensors/alerts-form'
 import {
     Dialog,
     DialogContent,
@@ -52,7 +52,7 @@ export function WaterTankGauge({
                                     Notificaciones: {sensor.name}
                                 </DialogTitle>
                             </DialogHeader>
-                            <NotificationSettingsForm sensorId={sensor.id} />
+                            <AlertsForm sensorId={sensor.id} />
                         </DialogContent>
                     </Dialog>
                     <EditSensorDialog
