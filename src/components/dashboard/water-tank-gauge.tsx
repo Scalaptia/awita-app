@@ -31,18 +31,16 @@ export function WaterTankGauge({
     onUpdate
 }: WaterTankGaugeProps) {
     const displayPercentage = Math.round(percentage)
-    const [alertsDialogOpen, setAlertsDialogOpen] = useState(false)
 
     return (
         <div className="flex flex-col items-center p-4 rounded-lg bg-card text-card-foreground hover:shadow-md transition-shadow">
             <div className="w-full flex items-center justify-between mb-4">
                 <h3 className="font-medium">{sensor.name}</h3>
                 <div className="flex items-center gap-2">
-                    <Dialog
-                        open={alertsDialogOpen}
-                        onOpenChange={setAlertsDialogOpen}
-                    >
-                        <DialogTrigger asChild>
+                    <EditAlertsDialog
+                        sensorId={sensor.id}
+                        sensorName={sensor.name}
+                        trigger={
                             <Button
                                 variant="ghost"
                                 size="icon"
@@ -50,19 +48,8 @@ export function WaterTankGauge({
                             >
                                 <Bell className="h-4 w-4" />
                             </Button>
-                        </DialogTrigger>
-                        <DialogContent className="max-w-2xl">
-                            <DialogHeader>
-                                <DialogTitle>
-                                    Alertas: {sensor.name}
-                                </DialogTitle>
-                            </DialogHeader>
-                            <EditAlertsDialog
-                                sensorId={sensor.id}
-                                onClose={() => setAlertsDialogOpen(false)}
-                            />
-                        </DialogContent>
-                    </Dialog>
+                        }
+                    />
                     <EditSensorDialog
                         sensor={sensor}
                         onUpdate={onUpdate}

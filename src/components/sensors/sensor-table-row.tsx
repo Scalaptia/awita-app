@@ -1,9 +1,20 @@
 import { TableRow, TableCell } from '@/components/ui/table'
 import { EditSensorDialog } from '@/components/sensors/edit-sensor-dialog'
 import { DeleteSensorDialog } from './delete-sensor-dialog'
+import { EditAlertsDialog } from './edit-alerts-dialog'
 import { cn } from '@/lib/utils'
 import { formatDistanceToNow } from 'date-fns'
 import { es } from 'date-fns/locale'
+import { Button } from '@/components/ui/button'
+import { Bell, Settings } from 'lucide-react'
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger
+} from '@/components/ui/dialog'
+import { useState } from 'react'
 
 interface SensorTableRowProps {
     sensor: Sensor
@@ -16,6 +27,8 @@ export function SensorTableRow({
     onDelete,
     onUpdate
 }: SensorTableRowProps) {
+    const [alertsDialogOpen, setAlertsDialogOpen] = useState(false)
+
     const getLatestReading = (sensor: Sensor) => {
         if (!sensor.water_level || !sensor.sensor_readings?.[0]) {
             return <span className="text-muted-foreground">Sin lecturas</span>
@@ -53,7 +66,7 @@ export function SensorTableRow({
             <TableCell className="font-medium truncate">
                 {sensor.name}
             </TableCell>
-            <TableCell className="truncate">{sensor.location || '-'}</TableCell>
+            <TableCell className="truncate">{sensor.location ?? '-'}</TableCell>
             <TableCell>
                 <span
                     className={cn(
@@ -77,8 +90,25 @@ export function SensorTableRow({
             </TableCell>
             <TableCell>{getLatestReading(sensor)}</TableCell>
             <TableCell className="text-right">
-                <div className="flex items-center justify-end gap-2 opacity-60 hover:opacity-100">
-                    <EditSensorDialog sensor={sensor} onUpdate={onUpdate} />
+                <div className="flex items-center justify-end gap-2 opacity-60 group-hover:opacity-100 transition-opacity">
+                    <EditAlertsDialog
+                        sensorId={sensor.id}
+                        sensorName={sensor.name}
+                        trigger={
+                            <Button variant="ghost" size="icon">
+                                <Bell className="h-4 w-4" />
+                            </Button>
+                        }
+                    />
+                    <EditSensorDialog
+                        sensor={sensor}
+                        onUpdate={onUpdate}
+                        trigger={
+                            <Button variant="ghost" size="icon">
+                                <Settings className="h-4 w-4" />
+                            </Button>
+                        }
+                    />
                     <DeleteSensorDialog
                         sensorName={sensor.name}
                         onDelete={() => onDelete(sensor.id)}

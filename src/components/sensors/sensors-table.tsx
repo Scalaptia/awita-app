@@ -65,7 +65,7 @@ export function SensorsTable({
                                 <TableHead className="w-[150px]">
                                     Última lectura
                                 </TableHead>
-                                <TableHead className="w-[100px]"></TableHead>
+                                <TableHead className="w-[150px]"></TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -133,7 +133,7 @@ export function SensorsTable({
                             <TableHead className="w-[150px]">
                                 Última lectura
                             </TableHead>
-                            <TableHead className="w-[100px]"></TableHead>
+                            <TableHead className="w-[150px]"></TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>

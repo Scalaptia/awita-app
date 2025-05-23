@@ -36,6 +36,7 @@ export function LoadingSensorRow() {
                 <div className="flex items-center justify-end gap-2">
                     <Skeleton className="h-8 w-8 rounded-md" />
                     <Skeleton className="h-8 w-8 rounded-md" />
+                    <Skeleton className="h-8 w-8 rounded-md" />
                 </div>
             </TableCell>
         </TableRow>

@@ -15,7 +15,7 @@ import {
     TooltipTrigger
 } from '@/components/ui/tooltip'
 import { useUpdateSensorMutation } from '@/lib/sensors-api'
-import { Pencil } from 'lucide-react'
+import { Settings } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
@@ -90,7 +90,7 @@ export function EditSensorDialog({
             <DialogTrigger asChild>
                 {trigger ?? (
                     <Button variant="ghost" size="icon">
-                        <Pencil className="h-4 w-4" />
+                        <Settings className="h-4 w-4" />
                     </Button>
                 )}
             </DialogTrigger>

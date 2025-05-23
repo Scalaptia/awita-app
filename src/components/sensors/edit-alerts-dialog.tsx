@@ -9,6 +9,13 @@ import {
     TooltipTrigger
 } from '@/components/ui/tooltip'
 import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger
+} from '@/components/ui/dialog'
+import {
     useToggleWaterLevelAlertMutation,
     useToggleDisconnectionAlertMutation,
     useUpdateWaterLevelThresholdMutation,
@@ -16,10 +23,14 @@ import {
 } from '@/lib/sensors-api'
 import { toast } from 'sonner'
 import { useForm } from 'react-hook-form'
+import { Bell } from 'lucide-react'
+import { useState } from 'react'
 
 interface EditAlertsDialogProps {
     sensorId: string
-    onClose?: () => void
+    sensorName: string
+    onUpdate?: () => void
+    trigger?: React.ReactNode
 }
 
 interface AlertsFormData {
@@ -28,7 +39,13 @@ interface AlertsFormData {
     waterLevelThreshold: number
 }
 
-export function EditAlertsDialog({ sensorId, onClose }: EditAlertsDialogProps) {
+export function EditAlertsDialog({
+    sensorId,
+    sensorName,
+    onUpdate,
+    trigger
+}: EditAlertsDialogProps) {
+    const [open, setOpen] = useState(false)
     const { data: sensor } = useSensorQuery(sensorId)
     const toggleWaterLevelMutation = useToggleWaterLevelAlertMutation()
     const toggleDisconnectionMutation = useToggleDisconnectionAlertMutation()
@@ -68,9 +85,10 @@ export function EditAlertsDialog({ sensorId, onClose }: EditAlertsDialogProps) {
             }
 
             toast.success('Configuración guardada correctamente')
-            if (onClose) {
-                onClose()
+            if (onUpdate) {
+                onUpdate()
             }
+            setOpen(false)
         } catch (err) {
             toast.error('Error al guardar la configuración')
             console.error('Error saving alerts configuration:', err)
@@ -82,110 +100,137 @@ export function EditAlertsDialog({ sensorId, onClose }: EditAlertsDialogProps) {
     }
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            {/* Water Level Alert */}
-            <div className="space-y-4 p-4 rounded-lg bg-card">
-                <div className="flex items-center justify-between">
-                    <div>
-                        <h4 className="font-medium">Alerta de nivel bajo</h4>
-                        <p className="text-sm text-muted-foreground">
-                            Recibe una notificación cuando el nivel del agua
-                            esté por debajo del umbral
-                        </p>
-                    </div>
-                    <Switch
-                        checked={waterLevelAlert}
-                        onCheckedChange={(checked) =>
-                            setValue('waterLevelAlert', checked, {
-                                shouldDirty: true
-                            })
-                        }
-                        disabled={isSubmitting}
-                    />
-                </div>
-                {waterLevelAlert && (
-                    <div className="space-y-2">
-                        <Label>Umbral</Label>
-                        <TooltipProvider>
-                            <Tooltip open={!!errors.waterLevelThreshold}>
-                                <TooltipTrigger asChild>
-                                    <div className="relative">
-                                        <Input
-                                            type="number"
-                                            disabled={isSubmitting}
-                                            className={`pr-8 ${
-                                                errors.waterLevelThreshold
-                                                    ? 'border-red-500'
-                                                    : ''
-                                            }`}
-                                            {...register(
-                                                'waterLevelThreshold',
-                                                {
-                                                    valueAsNumber: true,
-                                                    required:
-                                                        'El umbral es requerido',
-                                                    min: {
-                                                        value: 0,
-                                                        message:
-                                                            'El valor no puede ser negativo'
-                                                    },
-                                                    max: {
-                                                        value: 100,
-                                                        message:
-                                                            'El valor no puede ser mayor a 100'
-                                                    }
-                                                }
-                                            )}
-                                        />
-                                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">
-                                            %
-                                        </span>
-                                    </div>
-                                </TooltipTrigger>
-                                {errors.waterLevelThreshold && (
-                                    <TooltipContent
-                                        side="right"
-                                        className="bg-destructive text-destructive-foreground"
-                                    >
-                                        <p>
-                                            {errors.waterLevelThreshold.message}
-                                        </p>
-                                    </TooltipContent>
-                                )}
-                            </Tooltip>
-                        </TooltipProvider>
-                    </div>
+        <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+                {trigger ?? (
+                    <Button variant="ghost" size="icon">
+                        <Bell className="h-4 w-4" />
+                    </Button>
                 )}
-            </div>
-
-            {/* Disconnection Alert */}
-            <div className="space-y-4 p-4 rounded-lg bg-card">
-                <div className="flex items-center justify-between">
-                    <div>
-                        <h4 className="font-medium">Alerta de desconexión</h4>
-                        <p className="text-sm text-muted-foreground">
-                            Recibe una notificación cuando el sensor pierda
-                            conexión
-                        </p>
+            </DialogTrigger>
+            <DialogContent className="max-w-2xl">
+                <DialogHeader>
+                    <DialogTitle>Alertas: {sensorName}</DialogTitle>
+                </DialogHeader>
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+                    {/* Water Level Alert */}
+                    <div className="space-y-4 p-4 rounded-lg bg-card">
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <h4 className="font-medium">
+                                    Alerta de nivel bajo
+                                </h4>
+                                <p className="text-sm text-muted-foreground">
+                                    Recibe una notificación cuando el nivel del
+                                    agua esté por debajo del umbral
+                                </p>
+                            </div>
+                            <Switch
+                                checked={waterLevelAlert}
+                                onCheckedChange={(checked) =>
+                                    setValue('waterLevelAlert', checked, {
+                                        shouldDirty: true
+                                    })
+                                }
+                                disabled={isSubmitting}
+                            />
+                        </div>
+                        {waterLevelAlert && (
+                            <div className="space-y-2">
+                                <Label>Umbral</Label>
+                                <TooltipProvider>
+                                    <Tooltip
+                                        open={!!errors.waterLevelThreshold}
+                                    >
+                                        <TooltipTrigger asChild>
+                                            <div className="relative">
+                                                <Input
+                                                    type="number"
+                                                    disabled={isSubmitting}
+                                                    className={`pr-8 ${
+                                                        errors.waterLevelThreshold
+                                                            ? 'border-red-500'
+                                                            : ''
+                                                    }`}
+                                                    {...register(
+                                                        'waterLevelThreshold',
+                                                        {
+                                                            valueAsNumber: true,
+                                                            required:
+                                                                'El umbral es requerido',
+                                                            min: {
+                                                                value: 0,
+                                                                message:
+                                                                    'El valor no puede ser negativo'
+                                                            },
+                                                            max: {
+                                                                value: 100,
+                                                                message:
+                                                                    'El valor no puede ser mayor a 100'
+                                                            }
+                                                        }
+                                                    )}
+                                                />
+                                                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+                                                    %
+                                                </span>
+                                            </div>
+                                        </TooltipTrigger>
+                                        {errors.waterLevelThreshold && (
+                                            <TooltipContent
+                                                side="right"
+                                                className="bg-destructive text-destructive-foreground"
+                                            >
+                                                <p>
+                                                    {
+                                                        errors
+                                                            .waterLevelThreshold
+                                                            .message
+                                                    }
+                                                </p>
+                                            </TooltipContent>
+                                        )}
+                                    </Tooltip>
+                                </TooltipProvider>
+                            </div>
+                        )}
                     </div>
-                    <Switch
-                        checked={watch('disconnectionAlert')}
-                        onCheckedChange={(checked) =>
-                            setValue('disconnectionAlert', checked, {
-                                shouldDirty: true
-                            })
-                        }
-                        disabled={isSubmitting}
-                    />
-                </div>
-            </div>
 
-            {/* Save Button */}
-            <div className="flex justify-end pt-2">
-                <Button type="submit" disabled={!isDirty || isSubmitting}>
-                    Guardar
-                </Button>
-            </div>
-        </form>
+                    {/* Disconnection Alert */}
+                    <div className="space-y-4 p-4 rounded-lg bg-card">
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <h4 className="font-medium">
+                                    Alerta de desconexión
+                                </h4>
+                                <p className="text-sm text-muted-foreground">
+                                    Recibe una notificación cuando el sensor
+                                    pierda conexión
+                                </p>
+                            </div>
+                            <Switch
+                                checked={watch('disconnectionAlert')}
+                                onCheckedChange={(checked) =>
+                                    setValue('disconnectionAlert', checked, {
+                                        shouldDirty: true
+                                    })
+                                }
+                                disabled={isSubmitting}
+                            />
+                        </div>
+                    </div>
+
+                    {/* Save Button */}
+                    <div className="flex justify-end pt-2">
+                        <Button
+                            type="submit"
+                            disabled={!isDirty || isSubmitting}
+                        >
+                            Guardar
+                        </Button>
+                    </div>
+                </form>
+            </DialogContent>
+        </Dialog>
     )
 }
