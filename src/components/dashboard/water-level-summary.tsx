@@ -4,9 +4,13 @@ import { es } from 'date-fns/locale'
 
 interface WaterLevelSummaryProps {
     sensors: Sensor[]
+    onSensorUpdate?: (updated: Sensor) => void
 }
 
-export function WaterLevelSummary({ sensors }: WaterLevelSummaryProps) {
+export function WaterLevelSummary({
+    sensors,
+    onSensorUpdate
+}: WaterLevelSummaryProps) {
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {sensors.map((sensor) => {
@@ -24,7 +28,7 @@ export function WaterLevelSummary({ sensors }: WaterLevelSummaryProps) {
                 return (
                     <WaterTankGauge
                         key={sensor.id}
-                        name={sensor.name}
+                        sensor={sensor}
                         percentage={sensor.water_level?.percentage ?? 0}
                         lastUpdated={lastUpdated}
                         approximateVolume={
@@ -35,6 +39,7 @@ export function WaterLevelSummary({ sensors }: WaterLevelSummaryProps) {
                                 : undefined
                         }
                         isConnected={sensor.status}
+                        onUpdate={onSensorUpdate}
                     />
                 )
             })}

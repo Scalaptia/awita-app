@@ -1,37 +1,74 @@
 import { cn } from '@/lib/utils'
 import Wave from 'react-wavify'
+import { Settings, Bell } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { EditSensorDialog } from '@/components/sensors/edit-sensor-dialog'
+import { NotificationSettingsForm } from '@/components/sensors/notification-settings-form'
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger
+} from '@/components/ui/dialog'
 
 interface WaterTankGaugeProps {
-    name: string
+    sensor: Sensor
     percentage: number
     lastUpdated: string
     approximateVolume?: string
     isConnected?: boolean
+    onUpdate?: (updated: Sensor) => void
 }
 
 export function WaterTankGauge({
-    name,
+    sensor,
     percentage,
     lastUpdated,
     approximateVolume,
-    isConnected
+    isConnected,
+    onUpdate
 }: WaterTankGaugeProps) {
     const displayPercentage = Math.round(percentage)
 
     return (
         <div className="flex flex-col items-center p-4 rounded-lg bg-card text-card-foreground hover:shadow-md transition-shadow">
             <div className="w-full flex items-center justify-between mb-4">
-                <h3 className="font-medium">{name}</h3>
-                <span
-                    className={cn(
-                        'inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ring-1 ring-inset',
-                        isConnected
-                            ? 'bg-green-50 text-green-700 ring-green-600/20 dark:bg-green-500/10 dark:text-green-400 dark:ring-green-500/20'
-                            : 'bg-red-50 text-red-700 ring-red-600/20 dark:bg-red-500/10 dark:text-red-400 dark:ring-red-500/20'
-                    )}
-                >
-                    {isConnected ? 'Conectado' : 'Desconectado'}
-                </span>
+                <h3 className="font-medium">{sensor.name}</h3>
+                <div className="flex items-center gap-2">
+                    <Dialog>
+                        <DialogTrigger asChild>
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8"
+                            >
+                                <Bell className="h-4 w-4" />
+                            </Button>
+                        </DialogTrigger>
+                        <DialogContent className="max-w-2xl">
+                            <DialogHeader>
+                                <DialogTitle>
+                                    Notificaciones: {sensor.name}
+                                </DialogTitle>
+                            </DialogHeader>
+                            <NotificationSettingsForm sensorId={sensor.id} />
+                        </DialogContent>
+                    </Dialog>
+                    <EditSensorDialog
+                        sensor={sensor}
+                        onUpdate={onUpdate}
+                        trigger={
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8"
+                            >
+                                <Settings className="h-4 w-4" />
+                            </Button>
+                        }
+                    />
+                </div>
             </div>
 
             <div className="relative w-32 h-32 mb-4">

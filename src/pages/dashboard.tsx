@@ -10,7 +10,7 @@ import { RegisterSensorDialog } from '@/components/sensors/register-sensor-dialo
 
 export default function Dashboard() {
     const setTitle = useAppStore((state: any) => state.setTitle)
-    const { data: sensors, isLoading, error } = useSensorsQuery()
+    const { data: sensors, isLoading, error, refetch } = useSensorsQuery()
     const [selectedSensor, setSelectedSensor] = useState<string | null>(null)
     // Select the first sensor by default when sensors are loaded
     useEffect(() => {
@@ -29,6 +29,10 @@ export default function Dashboard() {
             locale: es,
             addSuffix: false
         })}`
+    }
+
+    const handleSensorUpdate = (updated: Sensor) => {
+        refetch()
     }
 
     if (error) {
@@ -77,7 +81,7 @@ export default function Dashboard() {
                     : sensors?.map((sensor) => (
                           <WaterTankGauge
                               key={sensor.id}
-                              name={sensor.name}
+                              sensor={sensor}
                               percentage={sensor.water_level?.percentage ?? 0}
                               lastUpdated={
                                   sensor.sensor_readings?.length
@@ -94,12 +98,13 @@ export default function Dashboard() {
                                       : undefined
                               }
                               isConnected={sensor.status}
+                              onUpdate={handleSensorUpdate}
                           />
                       ))}
             </div>
 
             {/* Historical chart */}
-            {sensors && sensors.length > 0 && selectedSensor ? (
+            {sensors ? (
                 <WaterLevelChart
                     sensors={sensors}
                     selectedSensor={selectedSensor}
