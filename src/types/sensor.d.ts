@@ -31,11 +31,11 @@ interface SensorWithAlerts extends Sensor {
     water_level_alert: boolean
     disconnection_alert: boolean
     water_level_threshold: number
-    disconnection_threshold: number
     last_water_notification: Date | null
     last_disconnection_notification: Date | null
     notification_method: 'EMAIL' | 'SMS'
     cooldown_minutes: number
+    disconnected_notified: boolean
 }
 
 interface SensorHistoryReading {

@@ -5,12 +5,16 @@ import {
     SidebarMenuButton,
     SidebarMenuItem
 } from '@/components/ui/sidebar'
-import { useNotificationsStore } from '@/stores/NotificationsStore'
+import {
+    useUnreadCountQuery,
+    useLastUnreadNotificationQuery
+} from '@/lib/notifications-api'
+import { formatDistanceToNow } from 'date-fns'
+import { es } from 'date-fns/locale'
 
 export function NavNotifications() {
-    const { notifications } = useNotificationsStore()
-    const unreadCount = notifications.filter((n) => !n.read).length
-    const lastUnreadNotification = notifications.find((n) => !n.read)
+    const { data: unreadCount = 0 } = useUnreadCountQuery()
+    const { data: lastUnreadNotification } = useLastUnreadNotificationQuery()
 
     return (
         <SidebarMenu className="flex-1 min-w-0 px-1">
@@ -28,23 +32,21 @@ export function NavNotifications() {
                         {lastUnreadNotification ? (
                             <div className="min-w-0 flex-1 text-left">
                                 <div className="truncate text-sm">
-                                    {lastUnreadNotification.title}
+                                    {lastUnreadNotification.type ===
+                                    'WATER_LEVEL'
+                                        ? `Nivel bajo en ${lastUnreadNotification.sensors.name}`
+                                        : `Desconexión en ${lastUnreadNotification.sensors.name}`}
                                 </div>
                                 <div className="truncate text-xs text-muted-foreground">
-                                    {new Date(
-                                        lastUnreadNotification.timestamp
-                                    ).toLocaleDateString('es-ES', {
-                                        day: '2-digit',
-                                        month: '2-digit',
-                                        year: '2-digit'
-                                    }) +
-                                        ' a las ' +
+                                    {formatDistanceToNow(
                                         new Date(
-                                            lastUnreadNotification.timestamp
-                                        ).toLocaleTimeString('es-ES', {
-                                            hour: '2-digit',
-                                            minute: '2-digit'
-                                        })}
+                                            lastUnreadNotification.created_at
+                                        ),
+                                        {
+                                            addSuffix: true,
+                                            locale: es
+                                        }
+                                    )}
                                 </div>
                             </div>
                         ) : (
