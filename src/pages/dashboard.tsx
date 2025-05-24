@@ -5,7 +5,6 @@ import { WaterTankGauge } from '@/components/dashboard/water-tank-gauge'
 import { WaterLevelChart } from '@/components/dashboard/water-level-chart'
 import { formatDistanceToNow } from 'date-fns'
 import { es } from 'date-fns/locale'
-import { EditSensorDialog } from '@/components/sensors/edit-sensor-dialog'
 import { RegisterSensorDialog } from '@/components/sensors/register-sensor-dialog'
 
 export default function Dashboard() {
@@ -31,7 +30,7 @@ export default function Dashboard() {
         })}`
     }
 
-    const handleSensorUpdate = (updated: Sensor) => {
+    const handleSensorUpdate = () => {
         refetch()
     }
 

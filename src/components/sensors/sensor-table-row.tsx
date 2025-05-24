@@ -7,14 +7,6 @@ import { formatDistanceToNow } from 'date-fns'
 import { es } from 'date-fns/locale'
 import { Button } from '@/components/ui/button'
 import { Bell, Settings } from 'lucide-react'
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger
-} from '@/components/ui/dialog'
-import { useState } from 'react'
 
 interface SensorTableRowProps {
     sensor: Sensor
@@ -27,8 +19,6 @@ export function SensorTableRow({
     onDelete,
     onUpdate
 }: SensorTableRowProps) {
-    const [alertsDialogOpen, setAlertsDialogOpen] = useState(false)
-
     const getLatestReading = (sensor: Sensor) => {
         if (!sensor.water_level || !sensor.sensor_readings?.[0]) {
             return <span className="text-muted-foreground">Sin lecturas</span>

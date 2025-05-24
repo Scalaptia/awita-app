@@ -1,17 +1,8 @@
-import { cn } from '@/lib/utils'
 import Wave from 'react-wavify'
 import { Settings, Bell } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { EditSensorDialog } from '@/components/sensors/edit-sensor-dialog'
 import { EditAlertsDialog } from '@/components/sensors/edit-alerts-dialog'
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger
-} from '@/components/ui/dialog'
-import { useState } from 'react'
 
 interface WaterTankGaugeProps {
     sensor: Sensor
@@ -27,7 +18,6 @@ export function WaterTankGauge({
     percentage,
     lastUpdated,
     approximateVolume,
-    isConnected,
     onUpdate
 }: WaterTankGaugeProps) {
     const displayPercentage = Math.round(percentage)
