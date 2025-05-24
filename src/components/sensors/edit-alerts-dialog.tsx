@@ -24,7 +24,7 @@ import {
 import { toast } from 'sonner'
 import { useForm } from 'react-hook-form'
 import { Bell } from 'lucide-react'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 interface EditAlertsDialogProps {
     sensorId: string
@@ -56,14 +56,20 @@ export function EditAlertsDialog({
         handleSubmit,
         watch,
         setValue,
+        reset,
         formState: { errors, isDirty, isSubmitting }
-    } = useForm<AlertsFormData>({
-        defaultValues: {
-            waterLevelAlert: sensor?.water_level_alert ?? false,
-            disconnectionAlert: sensor?.disconnection_alert ?? false,
-            waterLevelThreshold: sensor?.water_level_threshold ?? 20
+    } = useForm<AlertsFormData>()
+
+    // Update form values when sensor data is available
+    useEffect(() => {
+        if (sensor) {
+            reset({
+                waterLevelAlert: sensor.water_level_alert,
+                disconnectionAlert: sensor.disconnection_alert,
+                waterLevelThreshold: sensor.water_level_threshold
+            })
         }
-    })
+    }, [sensor, reset])
 
     const waterLevelAlert = watch('waterLevelAlert')
 
