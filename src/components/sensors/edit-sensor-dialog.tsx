@@ -16,10 +16,11 @@ import {
     TooltipTrigger
 } from '@/components/ui/tooltip'
 import { useUpdateSensorMutation } from '@/lib/sensors-api'
-import { Settings } from 'lucide-react'
+import { Settings, X, Map } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
+import { LocationMapDialog } from './location-map-dialog'
 
 interface EditSensorForm {
     name: string
@@ -27,6 +28,8 @@ interface EditSensorForm {
     capacity: number
     height: number
     time_between_readings: number
+    latitude?: number | null
+    longitude?: number | null
 }
 
 interface EditSensorDialogProps {
@@ -46,6 +49,8 @@ export function EditSensorDialog({
         register,
         handleSubmit,
         reset,
+        setValue,
+        watch,
         formState: { errors, isSubmitting, isDirty }
     } = useForm<EditSensorForm>({
         defaultValues: {
@@ -53,7 +58,9 @@ export function EditSensorDialog({
             location: sensor.location ?? '',
             capacity: sensor.capacity,
             height: sensor.height ?? 0,
-            time_between_readings: sensor.time_between_readings ?? 5
+            time_between_readings: sensor.time_between_readings ?? 5,
+            latitude: sensor.latitude ?? null,
+            longitude: sensor.longitude ?? null
         }
     })
 
@@ -64,7 +71,9 @@ export function EditSensorDialog({
             location: sensor.location ?? '',
             capacity: sensor.capacity,
             height: sensor.height ?? 0,
-            time_between_readings: sensor.time_between_readings ?? 5
+            time_between_readings: sensor.time_between_readings ?? 5,
+            latitude: sensor.latitude ?? null,
+            longitude: sensor.longitude ?? null
         })
     }, [sensor, open, reset])
 
@@ -85,6 +94,15 @@ export function EditSensorDialog({
             console.error('Failed to update sensor:', error)
         }
     }
+
+    const handleLocationSelect = (lat: number, lng: number) => {
+        // Solo actualizar el formulario con las nuevas coordenadas
+        setValue('latitude', lat, { shouldDirty: true })
+        setValue('longitude', lng, { shouldDirty: true })
+    }
+
+    const currentLatitude = watch('latitude')
+    const currentLongitude = watch('longitude')
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
@@ -139,17 +157,97 @@ export function EditSensorDialog({
 
                     <div className="space-y-2">
                         <Label htmlFor="location">Ubicación</Label>
-                        <Input
-                            id="location"
-                            placeholder="Ubicación del sensor"
-                            {...register('location', {
-                                maxLength: {
-                                    value: 100,
-                                    message:
-                                        'La ubicación no puede tener más de 100 caracteres'
+                        <TooltipProvider>
+                            <Tooltip open={!!errors.location}>
+                                <TooltipTrigger asChild>
+                                    <Input
+                                        id="location"
+                                        placeholder="Ubicación del sensor"
+                                        className={
+                                            errors.location
+                                                ? 'border-red-500'
+                                                : ''
+                                        }
+                                        {...register('location', {
+                                            maxLength: {
+                                                value: 25,
+                                                message:
+                                                    'La ubicación no puede tener más de 25 caracteres'
+                                            }
+                                        })}
+                                    />
+                                </TooltipTrigger>
+                                {errors.location && (
+                                    <TooltipContent
+                                        side="right"
+                                        className="bg-destructive text-destructive-foreground"
+                                    >
+                                        <p>{errors.location.message}</p>
+                                    </TooltipContent>
+                                )}
+                            </Tooltip>
+                        </TooltipProvider>
+                    </div>
+
+                    <div className="space-y-2">
+                        <Label>Ubicación en Mapa</Label>
+                        <div className="flex-1">
+                            <LocationMapDialog
+                                latitude={currentLatitude}
+                                longitude={currentLongitude}
+                                onLocationSelect={handleLocationSelect}
+                                showSaveButton={true}
+                                trigger={
+                                    <div className="flex gap-2 w-full">
+                                        <Button
+                                            type="button"
+                                            variant="outline"
+                                            className="flex-1"
+                                        >
+                                            <Map className="mr-2 h-4 w-4" />
+                                            Seleccionar ubicación en mapa
+                                        </Button>
+                                        {currentLatitude &&
+                                            currentLongitude && (
+                                                <Button
+                                                    type="button"
+                                                    variant="outline"
+                                                    size="icon"
+                                                    className="text-muted-foreground hover:text-destructive"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation()
+                                                        setValue(
+                                                            'latitude',
+                                                            null,
+                                                            {
+                                                                shouldDirty:
+                                                                    true
+                                                            }
+                                                        )
+                                                        setValue(
+                                                            'longitude',
+                                                            null,
+                                                            {
+                                                                shouldDirty:
+                                                                    true
+                                                            }
+                                                        )
+                                                    }}
+                                                >
+                                                    <X className="h-4 w-4" />
+                                                </Button>
+                                            )}
+                                    </div>
                                 }
-                            })}
-                        />
+                            />
+                        </div>
+                        {currentLatitude && currentLongitude && (
+                            <p className="text-sm text-muted-foreground">
+                                Ubicación seleccionada:{' '}
+                                {currentLatitude.toFixed(6)},{' '}
+                                {currentLongitude.toFixed(6)}
+                            </p>
+                        )}
                     </div>
 
                     <div className="space-y-2">

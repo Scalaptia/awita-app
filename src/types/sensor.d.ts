@@ -21,6 +21,8 @@ interface Sensor {
     water_level?: WaterLevel | null
     water_distance?: number
     height?: number
+    latitude?: number | null
+    longitude?: number | null
     _count?: {
         sensor_readings: number
     }

@@ -97,7 +97,7 @@ export function NotificationsDropdown() {
                         notifications.slice(0, 4).map((notification) => (
                             <DropdownMenuItem
                                 key={notification.id}
-                                className="flex flex-col items-start gap-1 px-4 py-2 cursor-pointer"
+                                className="flex flex-col items-start gap-1 px-4 py-2 cursor-pointer my-2 mx-1"
                                 onClick={() => handleMarkAsRead(notification)}
                             >
                                 <div className="flex items-center gap-2 w-full">
@@ -108,7 +108,7 @@ export function NotificationsDropdown() {
                                                 : 'bg-sky-500'
                                         }`}
                                     />
-                                    <span className="font-medium flex-1 min-w-0 truncate">
+                                    <span className="font-medium flex-1 min-w-0 truncate mr-8">
                                         {notification.type === 'WATER_LEVEL'
                                             ? `Nivel bajo en ${notification.sensors.name}`
                                             : `Desconexión en ${notification.sensors.name}`}
@@ -116,6 +116,8 @@ export function NotificationsDropdown() {
                                     <span className="text-xs text-muted-foreground shrink-0">
                                         {new Date(notification.created_at)
                                             .toLocaleString('es-MX', {
+                                                day: 'numeric',
+                                                month: 'short',
                                                 hour: 'numeric',
                                                 minute: '2-digit',
                                                 hour12: true

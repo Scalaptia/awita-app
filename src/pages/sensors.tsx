@@ -6,6 +6,7 @@ import {
 import { useAppStore } from '@/stores/AppStore'
 import { useEffect } from 'react'
 import { SensorsTable } from '@/components/sensors/sensors-table'
+import { SensorsMap } from '@/components/sensors/sensors-map'
 
 export default function Sensors() {
     const setTitle = useAppStore((state: any) => state.setTitle)
@@ -36,13 +37,14 @@ export default function Sensors() {
     }
 
     return (
-        <div className="px-6">
+        <div className="px-6 space-y-6">
             <SensorsTable
                 sensors={sensors ?? []}
                 loading={isLoading}
                 onDelete={handleDelete}
                 onUpdate={handleUpdate}
             />
+            <SensorsMap sensors={sensors ?? []} />
         </div>
     )
 }

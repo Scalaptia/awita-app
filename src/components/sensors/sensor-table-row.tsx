@@ -6,7 +6,10 @@ import { cn } from '@/lib/utils'
 import { formatDistanceToNow } from 'date-fns'
 import { es } from 'date-fns/locale'
 import { Button } from '@/components/ui/button'
-import { Bell, Settings } from 'lucide-react'
+import { Bell, Settings, Map, MapPin } from 'lucide-react'
+import { LocationMapDialog } from './location-map-dialog'
+import { useUpdateSensorMutation } from '@/lib/sensors-api'
+import { toast } from 'sonner'
 
 interface SensorTableRowProps {
     sensor: Sensor
@@ -14,11 +17,40 @@ interface SensorTableRowProps {
     onUpdate: (updated: Sensor) => void
 }
 
+// Esta función no hace nada ya que el mapa es solo para visualización
+const noopLocationSelect = (_lat: number, _lng: number) => {
+    // Vista de solo lectura - no se permiten cambios
+}
+
 export function SensorTableRow({
     sensor,
     onDelete,
     onUpdate
 }: SensorTableRowProps) {
+    const { mutateAsync: updateSensor } = useUpdateSensorMutation()
+
+    const handleLocationSelect = async (lat: number, lng: number) => {
+        try {
+            const updated = await updateSensor({
+                id: sensor.id,
+                data: {
+                    name: sensor.name,
+                    location: sensor.location,
+                    capacity: sensor.capacity,
+                    height: sensor.height ?? 0,
+                    time_between_readings: sensor.time_between_readings ?? 5,
+                    latitude: lat,
+                    longitude: lng
+                }
+            })
+            onUpdate(updated)
+            toast.success('Ubicación actualizada correctamente')
+        } catch (error) {
+            toast.error('Error al actualizar la ubicación')
+            console.error('Failed to update location:', error)
+        }
+    }
+
     const getLatestReading = (sensor: Sensor) => {
         if (!sensor.water_level || !sensor.sensor_readings?.[0]) {
             return <span className="text-muted-foreground">Sin lecturas</span>
@@ -48,6 +80,9 @@ export function SensorTableRow({
         )
     }
 
+    const lastReading = sensor.sensor_readings?.[0]
+    const hasLocation = sensor.latitude && sensor.longitude
+
     return (
         <TableRow className="group">
             <TableCell className="font-mono text-xs text-muted-foreground truncate">
@@ -56,7 +91,47 @@ export function SensorTableRow({
             <TableCell className="font-medium truncate">
                 {sensor.name}
             </TableCell>
-            <TableCell className="truncate">{sensor.location ?? '-'}</TableCell>
+            <TableCell className="truncate">
+                <div className="flex items-center gap-2">
+                    <div className="min-w-[200px] truncate">
+                        {hasLocation ? (
+                            <>
+                                {sensor.location}
+                                <LocationMapDialog
+                                    latitude={sensor.latitude}
+                                    longitude={sensor.longitude}
+                                    onLocationSelect={handleLocationSelect}
+                                    trigger={
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            className="h-6 w-6 ml-2 inline-flex"
+                                        >
+                                            <Map className="h-4 w-4" />
+                                        </Button>
+                                    }
+                                />
+                            </>
+                        ) : (
+                            <LocationMapDialog
+                                latitude={null}
+                                longitude={null}
+                                onLocationSelect={handleLocationSelect}
+                                trigger={
+                                    <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        className="text-muted-foreground hover:text-foreground"
+                                    >
+                                        <MapPin className="h-4 w-4 mr-2" />
+                                        Agregar
+                                    </Button>
+                                }
+                            />
+                        )}
+                    </div>
+                </div>
+            </TableCell>
             <TableCell>
                 <span
                     className={cn(
