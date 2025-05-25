@@ -10,16 +10,9 @@ import {
 } from 'recharts'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { ChartConfig, ChartContainer } from '@/components/ui/chart'
-import {
-    Loader2,
-    TrendingDown,
-    TrendingUp,
-    Minus,
-    InfoIcon
-} from 'lucide-react'
+import { Loader2 } from 'lucide-react'
 import { usePredictionsQuery } from '@/lib/predictions-api'
 import { useSensorHistoryQuery } from '@/lib/sensors-api'
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { calculateWaterLevel } from '@/lib/utils'
 import {
     Select,
@@ -28,12 +21,6 @@ import {
     SelectTrigger,
     SelectValue
 } from '@/components/ui/select'
-import {
-    Tooltip as UITooltip,
-    TooltipContent,
-    TooltipProvider,
-    TooltipTrigger
-} from '@/components/ui/tooltip'
 import { useState } from 'react'
 
 type TimeRange = '12h' | '24h' | '48h'
@@ -44,11 +31,7 @@ interface PredictionsChartProps {
     sensor: Sensor
 }
 
-export function PredictionsChart({
-    sensorId,
-    sensorName,
-    sensor
-}: PredictionsChartProps) {
+export function PredictionsChart({ sensorId, sensor }: PredictionsChartProps) {
     const [timeRange, setTimeRange] = useState<TimeRange>('24h')
     const hours = parseInt(timeRange)
 

@@ -7,7 +7,6 @@ import { PredictionsChart } from '@/components/dashboard/predictions-chart'
 import { formatDistanceToNow } from 'date-fns'
 import { es } from 'date-fns/locale'
 import { RegisterSensorDialog } from '@/components/sensors/register-sensor-dialog'
-import { usePredictionsQuery } from '@/lib/predictions-api'
 import {
     Select,
     SelectTrigger,
@@ -21,13 +20,6 @@ export default function Dashboard() {
     const selectedSensor = useAppStore((state) => state.selectedSensor)
     const setSelectedSensor = useAppStore((state) => state.setSelectedSensor)
     const { data: sensors, isLoading, error, refetch } = useSensorsQuery()
-
-    // Query predictions to check if they are available
-    const { error: predictionsError } = usePredictionsQuery(
-        selectedSensor ?? '',
-        { hours: 24 },
-        !!selectedSensor // Only enable the query if we have a selected sensor
-    )
 
     // Select the first sensor by default when sensors are loaded
     useEffect(() => {
