@@ -1,24 +1,40 @@
 import { useAppStore } from '@/stores/AppStore'
 import { useSensorsQuery } from '@/lib/sensors-api'
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
 import { WaterTankGauge } from '@/components/dashboard/water-tank-gauge'
 import { WaterLevelChart } from '@/components/dashboard/water-level-chart'
 import { PredictionsChart } from '@/components/dashboard/predictions-chart'
 import { formatDistanceToNow } from 'date-fns'
 import { es } from 'date-fns/locale'
 import { RegisterSensorDialog } from '@/components/sensors/register-sensor-dialog'
+import { usePredictionsQuery } from '@/lib/predictions-api'
+import {
+    Select,
+    SelectTrigger,
+    SelectValue,
+    SelectContent,
+    SelectItem
+} from '@/components/ui/select'
 
 export default function Dashboard() {
-    const setTitle = useAppStore((state: any) => state.setTitle)
+    const setTitle = useAppStore((state) => state.setTitle)
+    const selectedSensor = useAppStore((state) => state.selectedSensor)
+    const setSelectedSensor = useAppStore((state) => state.setSelectedSensor)
     const { data: sensors, isLoading, error, refetch } = useSensorsQuery()
-    const [selectedSensor, setSelectedSensor] = useState<string | null>(null)
+
+    // Query predictions to check if they are available
+    const { error: predictionsError } = usePredictionsQuery(
+        selectedSensor ?? '',
+        { hours: 24 },
+        !!selectedSensor // Only enable the query if we have a selected sensor
+    )
 
     // Select the first sensor by default when sensors are loaded
     useEffect(() => {
         if (sensors && sensors.length > 0 && !selectedSensor) {
             setSelectedSensor(sensors[0].id)
         }
-    }, [sensors, selectedSensor])
+    }, [sensors, selectedSensor, setSelectedSensor])
 
     useEffect(() => {
         setTitle('Panel de control')
@@ -64,7 +80,7 @@ export default function Dashboard() {
     return (
         <div className="px-6 pb-4 space-y-6">
             {/* Water tank gauges */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-[repeat(auto-fit,minmax(280px,1fr))]">
                 {isLoading
                     ? Array(3)
                           .fill(0)
@@ -104,41 +120,78 @@ export default function Dashboard() {
                       ))}
             </div>
 
-            {/* Charts grid */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Historical chart */}
-                <div className="w-full">
-                    {sensors ? (
-                        <WaterLevelChart
-                            sensors={sensors}
-                            selectedSensor={selectedSensor}
-                            onSensorChange={setSelectedSensor}
-                        />
-                    ) : (
-                        // Skeleton loading state
-                        <div className="animate-pulse rounded-lg bg-card p-4 flex flex-col items-center">
-                            <div className="h-64 w-full bg-muted rounded"></div>
-                        </div>
-                    )}
-                </div>
-
-                {/* Predictions chart */}
-                {selectedSensor && sensors && (
-                    <div className="w-full">
-                        <PredictionsChart
-                            sensorId={selectedSensor}
-                            sensorName={
-                                sensors.find((s) => s.id === selectedSensor)
-                                    ?.name ?? ''
-                            }
-                            sensor={
-                                sensors.find((s) => s.id === selectedSensor) ??
-                                sensors[0]
-                            }
-                        />
+            {/* Charts section */}
+            {sensors && sensors.length > 0 && (
+                <>
+                    {/* Sensor selector for charts */}
+                    <div className="flex items-center gap-2 px-1">
+                        <h3 className="text-sm font-medium text-muted-foreground">
+                            Sensor seleccionado:
+                        </h3>
+                        <Select
+                            value={selectedSensor ?? undefined}
+                            onValueChange={setSelectedSensor}
+                        >
+                            <SelectTrigger className="w-[200px]">
+                                <SelectValue
+                                    className="truncate"
+                                    placeholder="Seleccionar sensor"
+                                />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {sensors.map((sensor) => (
+                                    <SelectItem
+                                        key={sensor.id}
+                                        value={sensor.id}
+                                        className="truncate"
+                                    >
+                                        {sensor.name}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
                     </div>
-                )}
-            </div>
+
+                    {/* Charts grid */}
+                    <div className="grid grid-cols-1 gap-6">
+                        {/* Historical chart */}
+                        <div className="w-full">
+                            {sensors ? (
+                                <WaterLevelChart
+                                    sensors={sensors}
+                                    selectedSensor={selectedSensor}
+                                    onSensorChange={setSelectedSensor}
+                                    isLoading={isLoading}
+                                />
+                            ) : (
+                                // Skeleton loading state
+                                <div className="animate-pulse rounded-lg bg-card p-4 flex flex-col items-center">
+                                    <div className="h-64 w-full bg-muted rounded"></div>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Predictions chart - only show if predictions are available */}
+                        {selectedSensor && sensors && (
+                            <div className="w-full">
+                                <PredictionsChart
+                                    sensorId={selectedSensor}
+                                    sensorName={
+                                        sensors.find(
+                                            (s) => s.id === selectedSensor
+                                        )?.name ?? ''
+                                    }
+                                    sensor={
+                                        sensors.find(
+                                            (s) => s.id === selectedSensor
+                                        ) ?? sensors[0]
+                                    }
+                                />
+                            </div>
+                        )}
+                    </div>
+                </>
+            )}
         </div>
     )
 }

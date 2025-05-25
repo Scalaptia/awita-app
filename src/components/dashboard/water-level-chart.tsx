@@ -19,6 +19,13 @@ import {
 import { ChartConfig, ChartContainer } from '@/components/ui/chart'
 import { Loader2 } from 'lucide-react'
 import { useSensorHistoryQuery } from '@/lib/sensors-api'
+import { InfoIcon } from 'lucide-react'
+import {
+    Tooltip as UITooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger
+} from '@/components/ui/tooltip'
 
 type TimeRange = '24h' | '7d' | '30d'
 
@@ -32,18 +39,29 @@ interface WaterLevelChartProps {
 export function WaterLevelChart({
     sensors,
     selectedSensor,
-    onSensorChange,
     isLoading
 }: WaterLevelChartProps) {
     const [timeRange, setTimeRange] = useState<TimeRange>('24h')
-    const { data: historyData, isLoading: isHistoryLoading } =
-        useSensorHistoryQuery(selectedSensor ?? '', timeRange)
 
-    // Get the selected sensor to access its time_between_readings
+    // Get the selected sensor to access its data
     const selectedSensorData = sensors.find((s) => s.id === selectedSensor)
     const updateInterval = selectedSensorData?.time_between_readings ?? 60
 
+    // Check if we have enough readings before querying
+    const totalReadings = selectedSensorData?._count?.sensor_readings ?? 0
+    const hasEnoughReadings = totalReadings >= 60
+
+    const { data: historyData, isLoading: isHistoryLoading } =
+        useSensorHistoryQuery(
+            selectedSensor ?? '',
+            timeRange,
+            hasEnoughReadings
+        )
+
     const isRefetching = isLoading ?? isHistoryLoading
+
+    // Skip predictions if we don't have enough readings
+    const skipPredictions = !hasEnoughReadings
 
     // Format data for display with proper date handling
     const formattedData = (historyData ?? []).map((reading) => {
@@ -97,41 +115,54 @@ export function WaterLevelChart({
 
     return (
         <Card className="w-full">
-            <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 space-y-0 pb-2">
-                <Select
-                    value={selectedSensor ?? undefined}
-                    onValueChange={onSensorChange}
-                    disabled={isLoading}
-                >
-                    <SelectTrigger>
-                        <SelectValue placeholder="Seleccionar sensor" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        {sensors.map((sensor) => (
-                            <SelectItem key={sensor.id} value={sensor.id}>
-                                {sensor.name}
+            <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2">
+                <div className="flex items-center gap-2 min-w-0">
+                    <h3 className="text-lg font-medium truncate">Historial</h3>
+                    {skipPredictions && (
+                        <TooltipProvider>
+                            <UITooltip>
+                                <TooltipTrigger asChild>
+                                    <InfoIcon className="h-4 w-4 text-muted-foreground cursor-help shrink-0" />
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                    <p>
+                                        Las predicciones estarán disponibles
+                                        automáticamente cuando se tengan
+                                        suficientes datos históricos.
+                                    </p>
+                                </TooltipContent>
+                            </UITooltip>
+                        </TooltipProvider>
+                    )}
+                </div>
+                <div className="flex items-center gap-2">
+                    <Select
+                        value={timeRange}
+                        onValueChange={(v) => setTimeRange(v as TimeRange)}
+                    >
+                        <SelectTrigger className="w-[160px]">
+                            <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="24h">
+                                Últimas 24 horas
                             </SelectItem>
-                        ))}
-                    </SelectContent>
-                </Select>
-                <Select
-                    value={timeRange}
-                    onValueChange={(v) => setTimeRange(v as TimeRange)}
-                >
-                    <SelectTrigger>
-                        <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="24h">Últimas 24 horas</SelectItem>
-                        <SelectItem value="7d">Últimos 7 días</SelectItem>
-                        <SelectItem value="30d">Últimos 30 días</SelectItem>
-                    </SelectContent>
-                </Select>
+                            <SelectItem value="7d">Últimos 7 días</SelectItem>
+                            <SelectItem value="30d">Últimos 30 días</SelectItem>
+                        </SelectContent>
+                    </Select>
+                </div>
             </CardHeader>
             <CardContent>
                 <div className="w-full">
                     {isRefetching ? (
-                        <div className="h-[300px] w-full flex items-center justify-center">
+                        <div
+                            className={`${
+                                skipPredictions
+                                    ? 'h-[500px]'
+                                    : 'h-[300px] sm:h-[400px]'
+                            } w-full flex items-center justify-center`}
+                        >
                             <Loader2
                                 className="animate-spin text-muted-foreground"
                                 size={32}
@@ -216,7 +247,7 @@ export function WaterLevelChart({
                     )}
                 </div>
                 {!isRefetching && (
-                    <div className="text-xs text-muted-foreground text-center mt-2">
+                    <div className="text-xs text-muted-foreground text-center mt-4">
                         Actualizando cada {updateInterval} minutos
                     </div>
                 )}

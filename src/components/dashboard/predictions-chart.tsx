@@ -10,9 +10,16 @@ import {
 } from 'recharts'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { ChartConfig, ChartContainer } from '@/components/ui/chart'
-import { Loader2, TrendingDown, TrendingUp, Minus } from 'lucide-react'
+import {
+    Loader2,
+    TrendingDown,
+    TrendingUp,
+    Minus,
+    InfoIcon
+} from 'lucide-react'
 import { usePredictionsQuery } from '@/lib/predictions-api'
-import { Alert, AlertDescription } from '@/components/ui/alert'
+import { useSensorHistoryQuery } from '@/lib/sensors-api'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { calculateWaterLevel } from '@/lib/utils'
 import {
     Select,
@@ -21,6 +28,12 @@ import {
     SelectTrigger,
     SelectValue
 } from '@/components/ui/select'
+import {
+    Tooltip as UITooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger
+} from '@/components/ui/tooltip'
 import { useState } from 'react'
 
 type TimeRange = '12h' | '24h' | '48h'
@@ -39,20 +52,17 @@ export function PredictionsChart({
     const [timeRange, setTimeRange] = useState<TimeRange>('24h')
     const hours = parseInt(timeRange)
 
+    // Get sensor history to check if we have enough readings
+    const { data: historyData } = useSensorHistoryQuery(sensorId ?? '', '24h')
     const {
         data: predictions,
         isLoading,
         error
     } = usePredictionsQuery(sensorId ?? '', { hours })
 
-    if (error) {
-        return (
-            <Alert variant="destructive">
-                <AlertDescription>
-                    No se pudieron cargar las predicciones
-                </AlertDescription>
-            </Alert>
-        )
+    // Early return if we don't have enough data
+    if (!historyData || historyData.length < 60 || error) {
+        return null
     }
 
     const chartData = predictions?.predictions
@@ -107,8 +117,8 @@ export function PredictionsChart({
         <Card className="w-full">
             <CardHeader className="pb-2">
                 <div className="flex items-center justify-between">
-                    <h3 className="text-lg font-medium">
-                        Predicciones de nivel
+                    <h3 className="font-medium truncate max-w-[60%]">
+                        Predicciones
                     </h3>
                     <Select
                         value={timeRange}

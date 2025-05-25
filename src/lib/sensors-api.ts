@@ -148,7 +148,8 @@ export async function getSensorHistory(
 
 export function useSensorHistoryQuery(
     sensorId: string | null,
-    timeRange?: '24h' | '7d' | '30d'
+    timeRange?: '24h' | '7d' | '30d',
+    enabled?: boolean
 ) {
     const { userId, isSignedIn } = useAuthStore()
     const { data: sensor } = useSensorQuery(sensorId ?? '')
@@ -161,7 +162,7 @@ export function useSensorHistoryQuery(
     return useQuery({
         queryKey: ['sensorHistory', sensorId, timeRange],
         queryFn: () => getSensorHistory(sensorId!, timeRange),
-        enabled: !!userId && isSignedIn && !!sensorId,
+        enabled: enabled !== false && !!userId && isSignedIn && !!sensorId,
         retry: 3,
         retryDelay: 1000,
         refetchInterval,

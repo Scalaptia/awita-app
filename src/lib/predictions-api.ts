@@ -70,9 +70,9 @@ export function usePredictionsQuery(
         queryKey: [...predictionKeys.byId(sensorId), params],
         queryFn: () => getPredictions(sensorId, params),
         enabled: isLoaded && !!userId && isSignedIn && enabled,
-        retry: 3,
-        retryDelay: 1000,
-        staleTime: 5 * 60 * 1000,
+        retry: 2,
+        retryDelay: 500,
+        // staleTime: 5 * 60 * 1000,
         refetchInterval: 5 * 60 * 1000
     })
 }

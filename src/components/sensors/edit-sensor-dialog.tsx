@@ -112,7 +112,12 @@ export function EditSensorDialog({
                                             errors.name ? 'border-red-500' : ''
                                         }
                                         {...register('name', {
-                                            required: 'El nombre es requerido'
+                                            required: 'El nombre es requerido',
+                                            maxLength: {
+                                                value: 25,
+                                                message:
+                                                    'El nombre no puede tener más de 25 caracteres'
+                                            }
                                         })}
                                     />
                                 </TooltipTrigger>
@@ -133,7 +138,13 @@ export function EditSensorDialog({
                         <Input
                             id="location"
                             placeholder="Ubicación del sensor"
-                            {...register('location')}
+                            {...register('location', {
+                                maxLength: {
+                                    value: 100,
+                                    message:
+                                        'La ubicación no puede tener más de 100 caracteres'
+                                }
+                            })}
                         />
                     </div>
 
@@ -158,6 +169,11 @@ export function EditSensorDialog({
                                                 value: 1,
                                                 message:
                                                     'La capacidad mínima es 1'
+                                            },
+                                            max: {
+                                                value: 100000,
+                                                message:
+                                                    'La capacidad máxima es 100,000 litros'
                                             }
                                         })}
                                     />
@@ -194,6 +210,11 @@ export function EditSensorDialog({
                                                 value: 0,
                                                 message:
                                                     'La altura no puede ser negativa'
+                                            },
+                                            max: {
+                                                value: 1000,
+                                                message:
+                                                    'La altura máxima es 1000 cm (10 metros)'
                                             }
                                         })}
                                     />

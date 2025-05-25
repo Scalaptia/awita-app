@@ -25,7 +25,9 @@ export function WaterTankGauge({
     return (
         <div className="flex flex-col items-center p-4 rounded-lg bg-card text-card-foreground hover:shadow-md transition-shadow">
             <div className="w-full flex items-center justify-between mb-4">
-                <h3 className="font-medium">{sensor.name}</h3>
+                <h3 className="font-medium truncate max-w-[60%]">
+                    {sensor.name}
+                </h3>
                 <div className="flex items-center gap-2">
                     <EditAlertsDialog
                         sensorId={sensor.id}
