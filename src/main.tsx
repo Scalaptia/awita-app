@@ -8,7 +8,6 @@ import { QueryProvider } from './components/query-provider'
 import App from './App.tsx'
 import { ThemeProvider } from './components/theme-provider.tsx'
 import Dashboard from './pages/dashboard.tsx'
-import Notifications from './pages/notifications.tsx'
 import Sensors from './pages/sensors.tsx'
 import { ProtectedRoute } from './components/protected-route.tsx'
 import { Toaster } from 'sonner'
@@ -20,176 +19,40 @@ if (!PUBLISHABLE_KEY) {
     throw new Error('Missing Publishable Key')
 }
 
-// Custom Clerk theme matching the app's color scheme
+// Clerk theme configuration
 const clerkTheme = {
     baseTheme: dark,
     variables: {
-        colorPrimary: '#2563eb',
-        colorBackground: '#0f172a',
-        colorText: '#f8fafc',
-        colorInputText: '#FAFBFF',
-        colorInputBackground: 'rgba(255, 255, 255, 0.15)',
-        colorButtonText: '#21273A',
-        colorButtonBackground: '#e2e8f0',
-        colorDanger: '#ff6467',
-        borderRadius: '0.625rem',
-        colorTextSecondary: '#94a3b8',
-        colorTextLink: '#818cf8'
+        colorPrimary: 'hsl(var(--primary))',
+        colorBackground: 'hsl(var(--background))',
+        colorText: 'hsl(var(--foreground))',
+        colorInputText: 'hsl(var(--foreground))',
+        colorInputBackground: 'hsl(var(--input))',
+        colorSuccess: 'hsl(var(--success))',
+        colorWarning: 'hsl(var(--warning))',
+        colorDanger: 'hsl(var(--destructive))',
+        colorTextOnPrimaryBackground: 'hsl(var(--primary-foreground))',
+        colorTextSecondary: 'hsl(var(--muted-foreground))',
+        fontFamily: 'var(--font-sans)',
+        fontFamilyButtons: 'var(--font-sans)',
+        borderRadius: 'var(--radius)'
     },
     elements: {
-        formButtonPrimary: {
-            backgroundColor: '#334155',
-            color: '#FAFBFF',
-            '&:focus': {
-                backgroundColor: '#475569',
-                boxShadow: '0 0 0 2px #334155, 0 0 0 4px #475569'
-            },
-            '&:hover': {
-                backgroundColor: '#475569'
-            }
-        },
-        card: {
-            backgroundColor: '#1e293b',
-            boxShadow: '0 4px 10px rgba(0, 0, 0, 0.3)'
-        },
-        footer: {
-            color: '#cbd5e1',
-            '& a': {
-                color: '#94a3b8',
-                '&:hover': {
-                    color: '#e2e8f0'
-                }
-            }
-        },
-        footerActionLink: {
-            color: '#818cf8',
-            '&:hover': {
-                color: '#a5b4fc'
-            }
-        },
-        headerTitle: {
-            color: '#f8fafc'
-        },
-        headerSubtitle: {
-            color: '#cbd5e1'
-        },
-        formFieldLabel: {
-            color: '#f1f5f9'
-        },
-        formFieldHintText: {
-            color: '#cbd5e1'
-        },
-        formFieldAction: {
-            color: '#818cf8',
-            fontWeight: '500',
-            '&:hover': {
-                color: '#a5b4fc'
-            }
-        },
-        formResendCodeLink: {
-            color: '#60a5fa',
-            '&:hover': {
-                color: '#93c5fd'
-            }
-        },
-        identityPreviewEditButton: {
-            color: '#818cf8',
-            fontWeight: '500',
-            '&:hover': {
-                color: '#a5b4fc'
-            }
-        },
-        navbarButton: {
-            color: '#60a5fa',
-            '&:hover': {
-                color: '#93c5fd'
-            }
-        },
-        alternativeMethodsBlockButton: {
-            color: '#818cf8',
-            fontWeight: '500',
-            '&:hover': {
-                color: '#a5b4fc'
-            }
-        },
-        formButtonReset: {
-            color: '#818cf8',
-            fontWeight: '500',
-            '&:hover': {
-                color: '#a5b4fc'
-            }
-        },
-        profileSectionPrimaryButton: {
-            color: '#818cf8',
-            fontWeight: '600',
-            backgroundColor: 'rgba(129, 140, 248, 0.1)',
-            '&:hover': {
-                color: '#a5b4fc',
-                backgroundColor: 'rgba(129, 140, 248, 0.2)'
-            }
-        },
-        userButtonPopoverActionButton: {
-            color: '#818cf8',
-            fontWeight: '600',
-            backgroundColor: 'rgba(129, 140, 248, 0.1)',
-            '&:hover': {
-                color: '#a5b4fc',
-                backgroundColor: 'rgba(129, 140, 248, 0.2)'
-            }
-        },
-        userButtonPopoverFooter: {
-            '& button': {
-                color: '#818cf8',
-                fontWeight: '600',
-                '&:hover': {
-                    color: '#a5b4fc'
-                }
-            }
-        },
-        userProfile: {
-            '& button': {
-                color: '#818cf8',
-                '&:hover': {
-                    color: '#a5b4fc'
-                }
-            }
-        },
-        userProfilePage: {
-            '& button': {
-                color: '#818cf8',
-                '&:hover': {
-                    color: '#a5b4fc'
-                }
-            }
-        },
-        userProfileSectionTitle: {
-            '& button': {
-                color: '#818cf8',
-                fontWeight: '600',
-                '&:hover': {
-                    color: '#a5b4fc'
-                }
-            }
-        },
-        userButtonPopoverCard: {
-            '& a, & button': {
-                color: '#818cf8',
-                fontWeight: '600',
-                '&:hover': {
-                    color: '#a5b4fc'
-                }
-            }
-        },
-        badge: {
-            backgroundColor: 'rgba(129, 140, 248, 0.2)',
-            color: '#818cf8'
-        },
-        userPreviewMainIdentifier: {
-            color: '#f8fafc'
-        },
-        userPreviewSecondaryIdentifier: {
-            color: '#cbd5e1'
-        }
+        card: 'shadow-none bg-card border',
+        navbar: 'hidden',
+        headerTitle: 'text-foreground',
+        headerSubtitle: 'text-muted-foreground',
+        socialButtonsIconButton__github:
+            'hover:bg-accent hover:text-accent-foreground',
+        formFieldInput:
+            'bg-background border focus-visible:ring-ring/50 focus-visible:ring-[3px] focus-visible:border-ring',
+        formButtonPrimary:
+            'bg-primary text-primary-foreground shadow-sm hover:bg-primary/90',
+        formFieldInputShowPasswordButton: 'text-muted-foreground',
+        footerActionText: 'text-muted-foreground',
+        footerActionLink: 'text-primary hover:text-primary/90',
+        identityPreviewEditButton: 'text-muted-foreground',
+        formResendCodeLink: 'text-primary hover:text-primary/90'
     }
 }
 
@@ -213,10 +76,6 @@ createRoot(document.getElementById('root')!).render(
                             <Route element={<ProtectedRoute />}>
                                 <Route element={<App />}>
                                     <Route index element={<Dashboard />} />
-                                    <Route
-                                        path="notifications"
-                                        element={<Notifications />}
-                                    />
                                     <Route
                                         path="sensors"
                                         element={<Sensors />}

@@ -222,18 +222,6 @@ export function PredictionsChart({ sensorId, sensor }: PredictionsChartProps) {
                                     <p className="text-muted-foreground mt-1 text-xs">
                                         {predictions.insights.trend}
                                     </p>
-                                    {predictions.insights.warning && (
-                                        <p
-                                            className={`mt-1 ${
-                                                predictions.insights
-                                                    .risk_level === 'alto'
-                                                    ? 'text-destructive'
-                                                    : 'text-warning'
-                                            }`}
-                                        >
-                                            {predictions.insights.warning}
-                                        </p>
-                                    )}
                                 </div>
                             )}
                         </>

@@ -4,7 +4,8 @@ import {
     DialogContent,
     DialogHeader,
     DialogTitle,
-    DialogTrigger
+    DialogTrigger,
+    DialogDescription
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -97,6 +98,9 @@ export function EditSensorDialog({
             <DialogContent className="max-w-2xl">
                 <DialogHeader>
                     <DialogTitle>Editar Sensor: {sensor.name}</DialogTitle>
+                    <DialogDescription>
+                        Modifica los detalles del sensor según sea necesario.
+                    </DialogDescription>
                 </DialogHeader>
 
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">

@@ -13,7 +13,8 @@ import {
     DialogContent,
     DialogHeader,
     DialogTitle,
-    DialogTrigger
+    DialogTrigger,
+    DialogDescription
 } from '@/components/ui/dialog'
 import {
     useToggleWaterLevelAlertMutation,
@@ -117,6 +118,10 @@ export function EditAlertsDialog({
             <DialogContent className="max-w-2xl">
                 <DialogHeader>
                     <DialogTitle>Alertas: {sensorName}</DialogTitle>
+                    <DialogDescription>
+                        Configura las alertas y umbrales de notificación para
+                        este sensor.
+                    </DialogDescription>
                 </DialogHeader>
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                     {/* Water Level Alert */}

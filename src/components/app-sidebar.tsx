@@ -3,7 +3,7 @@ import { RadioIcon, LayoutDashboardIcon, Loader2Icon } from 'lucide-react'
 
 import { NavMain } from '@/components/ui/nav-main'
 import { NavUser } from '@/components/nav-user'
-import { NavNotifications } from '@/components/nav-notifications'
+import { NavNotifications } from '@/components/notifications/nav-notifications'
 import {
     Sidebar,
     SidebarContent,
@@ -14,6 +14,7 @@ import {
     useSidebar
 } from '@/components/ui/sidebar'
 import { Link, useLocation } from 'react-router-dom'
+import { Separator } from '@radix-ui/react-separator'
 
 const data = {
     navMain: [
@@ -63,6 +64,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             </SidebarContent>
             <SidebarFooter className="flex gap-1 p-1">
                 <NavNotifications />
+                <Separator
+                    orientation="horizontal"
+                    className="my-2 bg-border w-full h-[1px]"
+                    decorative
+                />
                 <NavUser />
             </SidebarFooter>
         </Sidebar>

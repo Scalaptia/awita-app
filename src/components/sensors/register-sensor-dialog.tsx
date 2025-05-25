@@ -6,7 +6,8 @@ import {
     DialogContent,
     DialogHeader,
     DialogTitle,
-    DialogFooter
+    DialogFooter,
+    DialogDescription
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -55,6 +56,10 @@ export function RegisterSensorDialog({
                 <DialogContent>
                     <DialogHeader>
                         <DialogTitle>Registrar Nuevo Sensor</DialogTitle>
+                        <DialogDescription>
+                            Ingresa el ID único del sensor para registrarlo en
+                            el sistema.
+                        </DialogDescription>
                     </DialogHeader>
 
                     <form onSubmit={handleSubmit(onSubmit)}>

@@ -121,7 +121,7 @@ export default function Dashboard() {
                             Sensor seleccionado:
                         </h3>
                         <Select
-                            value={selectedSensor ?? undefined}
+                            value={selectedSensor ?? ''}
                             onValueChange={setSelectedSensor}
                         >
                             <SelectTrigger className="w-[200px]">
