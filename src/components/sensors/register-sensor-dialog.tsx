@@ -16,9 +16,13 @@ import { toast } from 'sonner'
 
 interface RegisterSensorDialogProps {
     children?: ReactNode
+    onRegister?: () => void
 }
 
-export function RegisterSensorDialog({ children }: RegisterSensorDialogProps) {
+export function RegisterSensorDialog({
+    children,
+    onRegister
+}: RegisterSensorDialogProps) {
     const [open, setOpen] = useState(false)
     const { mutate: registerSensor, isPending } = useRegisterSensorMutation()
     const { register, handleSubmit, reset } = useForm<RegisterSensorForm>({
@@ -33,6 +37,7 @@ export function RegisterSensorDialog({ children }: RegisterSensorDialogProps) {
                 setOpen(false)
                 reset()
                 toast.success('Sensor registrado correctamente')
+                onRegister?.()
             },
             onError: (error: Error) => {
                 toast.error(error.message)

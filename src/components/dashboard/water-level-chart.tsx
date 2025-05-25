@@ -37,7 +37,7 @@ export function WaterLevelChart({
 }: WaterLevelChartProps) {
     const [timeRange, setTimeRange] = useState<TimeRange>('24h')
     const { data: historyData, isLoading: isHistoryLoading } =
-        useSensorHistoryQuery(selectedSensor, timeRange)
+        useSensorHistoryQuery(selectedSensor ?? '', timeRange)
 
     // Get the selected sensor to access its time_between_readings
     const selectedSensorData = sensors.find((s) => s.id === selectedSensor)
@@ -131,7 +131,7 @@ export function WaterLevelChart({
             <CardContent>
                 <div className="w-full">
                     {isRefetching ? (
-                        <div className="h-full w-full flex items-center justify-center">
+                        <div className="h-[300px] w-full flex items-center justify-center">
                             <Loader2
                                 className="animate-spin text-muted-foreground"
                                 size={32}
@@ -139,14 +139,14 @@ export function WaterLevelChart({
                         </div>
                     ) : (
                         <ChartContainer config={chartConfig}>
-                            <ResponsiveContainer width="100%" height="100%">
+                            <ResponsiveContainer width="100%">
                                 <AreaChart
                                     data={sortedData}
                                     margin={{
-                                        top: 30,
+                                        top: 20,
                                         right: 20,
                                         left: 20,
-                                        bottom: 0
+                                        bottom: 10
                                     }}
                                 >
                                     <CartesianGrid
@@ -159,7 +159,7 @@ export function WaterLevelChart({
                                         tickLine={false}
                                         tickMargin={10}
                                         textAnchor="end"
-                                        height={60}
+                                        height={40}
                                         tick={{
                                             fontSize: 11,
                                             fill: 'var(--muted-foreground)'
@@ -178,7 +178,6 @@ export function WaterLevelChart({
                                     />
                                     <Tooltip
                                         labelFormatter={(value, items) => {
-                                            // Usar el valor directamente del punto de datos actual
                                             const item = items?.[0]?.payload
                                             return item?.tooltipTime ?? value
                                         }}

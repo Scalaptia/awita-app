@@ -3,6 +3,7 @@ import { useSensorsQuery } from '@/lib/sensors-api'
 import { useState, useEffect } from 'react'
 import { WaterTankGauge } from '@/components/dashboard/water-tank-gauge'
 import { WaterLevelChart } from '@/components/dashboard/water-level-chart'
+import { PredictionsChart } from '@/components/dashboard/predictions-chart'
 import { formatDistanceToNow } from 'date-fns'
 import { es } from 'date-fns/locale'
 import { RegisterSensorDialog } from '@/components/sensors/register-sensor-dialog'
@@ -11,6 +12,7 @@ export default function Dashboard() {
     const setTitle = useAppStore((state: any) => state.setTitle)
     const { data: sensors, isLoading, error, refetch } = useSensorsQuery()
     const [selectedSensor, setSelectedSensor] = useState<string | null>(null)
+
     // Select the first sensor by default when sensors are loaded
     useEffect(() => {
         if (sensors && sensors.length > 0 && !selectedSensor) {
@@ -54,15 +56,15 @@ export default function Dashboard() {
                     Para comenzar a monitorear tus tanques de agua, registra tu
                     primer sensor.
                 </p>
-                <RegisterSensorDialog />
+                <RegisterSensorDialog onRegister={handleSensorUpdate} />
             </div>
         )
     }
 
     return (
         <div className="px-6 pb-4 space-y-6">
-            {/* Water tanks grid */}
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {/* Water tank gauges */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {isLoading
                     ? Array(3)
                           .fill(0)
@@ -102,19 +104,41 @@ export default function Dashboard() {
                       ))}
             </div>
 
-            {/* Historical chart */}
-            {sensors ? (
-                <WaterLevelChart
-                    sensors={sensors}
-                    selectedSensor={selectedSensor}
-                    onSensorChange={setSelectedSensor}
-                />
-            ) : (
-                // Skeleton loading state
-                <div className="animate-pulse rounded-lg bg-card p-4 flex flex-col items-center">
-                    <div className="h-64 w-full bg-muted rounded"></div>
+            {/* Charts grid */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Historical chart */}
+                <div className="w-full">
+                    {sensors ? (
+                        <WaterLevelChart
+                            sensors={sensors}
+                            selectedSensor={selectedSensor}
+                            onSensorChange={setSelectedSensor}
+                        />
+                    ) : (
+                        // Skeleton loading state
+                        <div className="animate-pulse rounded-lg bg-card p-4 flex flex-col items-center">
+                            <div className="h-64 w-full bg-muted rounded"></div>
+                        </div>
+                    )}
                 </div>
-            )}
+
+                {/* Predictions chart */}
+                {selectedSensor && sensors && (
+                    <div className="w-full">
+                        <PredictionsChart
+                            sensorId={selectedSensor}
+                            sensorName={
+                                sensors.find((s) => s.id === selectedSensor)
+                                    ?.name ?? ''
+                            }
+                            sensor={
+                                sensors.find((s) => s.id === selectedSensor) ??
+                                sensors[0]
+                            }
+                        />
+                    </div>
+                )}
+            </div>
         </div>
     )
 }

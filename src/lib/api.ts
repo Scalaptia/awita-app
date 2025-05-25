@@ -5,8 +5,8 @@ import { ApiError } from './errors'
 class ApiClient {
     private baseUrl: string
 
-    constructor() {
-        this.baseUrl = import.meta.env.VITE_API_URL
+    constructor(baseUrl?: string) {
+        this.baseUrl = baseUrl ?? import.meta.env.VITE_API_URL
     }
 
     private async fetchWithAuth(
@@ -118,9 +118,13 @@ class ApiClient {
     }
 }
 
-// Singleton instance
+// Singleton instances
 const apiClient = new ApiClient()
-export { apiClient }
+const predictionsApiClient = new ApiClient(
+    import.meta.env.VITE_PREDICTIONS_API_URL
+)
+
+export { apiClient, predictionsApiClient }
 
 // Query keys for caching and invalidation
 export const queryKeys = {
