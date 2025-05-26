@@ -4,11 +4,6 @@ import 'leaflet/dist/leaflet.css'
 import L from 'leaflet'
 import { cn } from '@/lib/utils'
 
-// Import marker icons
-import markerIcon2x from '/images/marker-icon-2x.png'
-import markerIcon from '/images/marker-icon.png'
-import markerShadow from '/images/marker-shadow.png'
-
 // Add global styles to handle z-index
 const mapStyles = `
 .leaflet-pane {
@@ -26,9 +21,9 @@ const mapStyles = `
 // Fix for default marker icons in react-leaflet
 delete (L.Icon.Default.prototype as any)._getIconUrl
 L.Icon.Default.mergeOptions({
-    iconRetinaUrl: markerIcon2x,
-    iconUrl: markerIcon,
-    shadowUrl: markerShadow
+    iconRetinaUrl: '/images/marker-icon-2x.png',
+    iconUrl: '/images/marker-icon.png',
+    shadowUrl: '/images/marker-shadow.png'
 })
 
 interface SensorsMapProps {
