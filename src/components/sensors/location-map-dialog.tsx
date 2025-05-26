@@ -1,11 +1,5 @@
 import { useState, useEffect } from 'react'
-import {
-    MapContainer,
-    TileLayer,
-    Marker,
-    useMapEvents,
-    useMap
-} from 'react-leaflet'
+import { MapContainer, TileLayer, Marker, useMap } from 'react-leaflet'
 import { Button } from '@/components/ui/button'
 import {
     Dialog,
@@ -37,7 +31,6 @@ interface LocationMapDialogProps {
 }
 
 function LocationMarker({
-    onLocationSelect,
     initialPosition
 }: {
     onLocationSelect: (lat: number, lng: number) => void
@@ -48,13 +41,6 @@ function LocationMarker({
             ? L.latLng(initialPosition[0], initialPosition[1])
             : null
     )
-
-    const map = useMapEvents({
-        click(e) {
-            setPosition(e.latlng)
-            onLocationSelect(e.latlng.lat, e.latlng.lng)
-        }
-    })
 
     // Update position when initialPosition changes
     useEffect(() => {
