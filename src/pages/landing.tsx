@@ -46,7 +46,7 @@ export const LandingPage = () => {
                 <nav className="container mx-auto px-4 py-4 flex items-center justify-between">
                     <div className="flex items-center gap-2">
                         <img
-                            src="/logo_light_transparent.png"
+                            src="/favicon.png"
                             alt="AWITA"
                             className="h-8 w-auto"
                         />

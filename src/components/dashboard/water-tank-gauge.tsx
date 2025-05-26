@@ -23,7 +23,7 @@ export function WaterTankGauge({
     const displayPercentage = Math.round(percentage)
 
     return (
-        <div className="flex flex-col items-center p-4 rounded-lg bg-card text-card-foreground hover:shadow-md transition-shadow">
+        <div className="flex flex-col items-center p-4 rounded-lg bg-card text-card-foreground border shadow-sm">
             <div className="w-full flex items-center justify-between mb-4">
                 <h3 className="font-medium truncate max-w-[60%]">
                     {sensor.name}
