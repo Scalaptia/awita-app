@@ -17,11 +17,6 @@ interface SensorTableRowProps {
     onUpdate: (updated: Sensor) => void
 }
 
-// Esta función no hace nada ya que el mapa es solo para visualización
-const noopLocationSelect = (_lat: number, _lng: number) => {
-    // Vista de solo lectura - no se permiten cambios
-}
-
 export function SensorTableRow({
     sensor,
     onDelete,
@@ -80,7 +75,6 @@ export function SensorTableRow({
         )
     }
 
-    const lastReading = sensor.sensor_readings?.[0]
     const hasLocation = sensor.latitude && sensor.longitude
 
     return (

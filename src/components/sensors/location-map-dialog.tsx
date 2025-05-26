@@ -1,11 +1,5 @@
 import { useState, useEffect } from 'react'
-import {
-    MapContainer,
-    TileLayer,
-    Marker,
-    useMapEvents,
-    useMap
-} from 'react-leaflet'
+import { MapContainer, TileLayer, Marker, useMap } from 'react-leaflet'
 import { Button } from '@/components/ui/button'
 import {
     Dialog,
@@ -20,12 +14,17 @@ import { Map } from 'lucide-react'
 import 'leaflet/dist/leaflet.css'
 import L from 'leaflet'
 
+// Import marker icons
+import markerIcon2x from '/images/marker-icon-2x.png'
+import markerIcon from '/images/marker-icon.png'
+import markerShadow from '/images/marker-shadow.png'
+
 // Fix for default marker icons in react-leaflet
 delete (L.Icon.Default.prototype as any)._getIconUrl
 L.Icon.Default.mergeOptions({
-    iconRetinaUrl: '/images/marker-icon-2x.png',
-    iconUrl: '/images/marker-icon.png',
-    shadowUrl: '/images/marker-shadow.png'
+    iconRetinaUrl: markerIcon2x,
+    iconUrl: markerIcon,
+    shadowUrl: markerShadow
 })
 
 interface LocationMapDialogProps {
@@ -48,13 +47,7 @@ function LocationMarker({
             ? L.latLng(initialPosition[0], initialPosition[1])
             : null
     )
-
-    const map = useMapEvents({
-        click(e) {
-            setPosition(e.latlng)
-            onLocationSelect(e.latlng.lat, e.latlng.lng)
-        }
-    })
+    const map = useMap()
 
     // Update position when initialPosition changes
     useEffect(() => {
@@ -65,6 +58,21 @@ function LocationMarker({
             setPosition(null)
         }
     }, [initialPosition])
+
+    // Add click handler to map
+    useEffect(() => {
+        const handleClick = (e: L.LeafletMouseEvent) => {
+            const { lat, lng } = e.latlng
+            setPosition(e.latlng)
+            onLocationSelect(lat, lng)
+        }
+
+        map.on('click', handleClick)
+
+        return () => {
+            map.off('click', handleClick)
+        }
+    }, [map, onLocationSelect])
 
     return position === null ? null : <Marker position={position} />
 }
