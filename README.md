@@ -1,20 +1,25 @@
 <div align="center">
-  <img src="./public/logo.svg" alt="AWITA Logo" width="200" />
+  <img src="./public/logo_full_light.svg" alt="AWITA Logo" width="200" />
 </div>
 
 ## 💧 Acerca del Proyecto
 
 AWITA es una aplicación web para monitorear tanques de agua en tiempo real. Permite a los usuarios visualizar niveles de agua, configurar alertas y gestionar múltiples sensores.
 
+## 🧪 Prueba la Aplicación
+
+Puedes probar la aplicación utilizando el sensor de demostración con ID: `7FHBib`
+
 ## ✨ Características
 
--   📊 Dashboard en tiempo real con visualización del nivel de agua
--   📱 Diseño responsive y adaptable
--   🔔 Sistema de notificaciones
--   📈 Gráficas históricas de niveles
--   🎛️ Gestión de múltiples sensores
--   🌙 Modo oscuro/claro
--   🔐 Autenticación segura con Clerk
+-   Dashboard en tiempo real con visualización del nivel de agua
+-   Diseño responsive y adaptable
+-   Sistema de notificaciones
+-   Gráficas históricas de niveles
+-   Predicciones de nivel de agua a futuro
+-   Gestión de múltiples sensores
+-   Modo oscuro/claro
+-   Autenticación segura con Clerk
 
 ## 🛠️ Tecnologías
 
@@ -32,6 +37,7 @@ AWITA es una aplicación web para monitorear tanques de agua en tiempo real. Per
 ```env
 VITE_CLERK_PUBLISHABLE_KEY=your_clerk_key
 VITE_API_URL=your_api_url
+VITE_PREDICTIONS_API_URL=your_api_url
 ```
 
 ## ⚖️ Licencia
