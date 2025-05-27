@@ -416,27 +416,36 @@ export const LandingPage = () => {
                 <div className="mx-auto max-w-7xl px-6 lg:px-8">
                     <div className="text-center space-y-4 mb-16">
                         <motion.h2
-                            initial={{ opacity: 0, y: 20 }}
+                            initial={{ opacity: 0, y: 10 }}
                             whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
+                            viewport={{ once: true, margin: '-100px' }}
+                            transition={{ duration: 0.6, ease: 'easeOut' }}
                             className="text-base font-semibold leading-7 text-blue-600 uppercase tracking-wider"
                         >
                             Planes Accesibles
                         </motion.h2>
                         <motion.p
-                            initial={{ opacity: 0, y: 20 }}
+                            initial={{ opacity: 0, y: 10 }}
                             whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ delay: 0.1 }}
+                            viewport={{ once: true, margin: '-100px' }}
+                            transition={{
+                                duration: 0.6,
+                                delay: 0.1,
+                                ease: 'easeOut'
+                            }}
                             className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl"
                         >
                             Soluciones a tu medida
                         </motion.p>
                         <motion.p
-                            initial={{ opacity: 0, y: 20 }}
+                            initial={{ opacity: 0, y: 10 }}
                             whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ delay: 0.2 }}
+                            viewport={{ once: true, margin: '-100px' }}
+                            transition={{
+                                duration: 0.6,
+                                delay: 0.2,
+                                ease: 'easeOut'
+                            }}
                             className="mt-6 text-lg leading-8 text-gray-600"
                         >
                             Elige el plan que mejor se adapte a tus necesidades
@@ -476,13 +485,13 @@ export const LandingPage = () => {
                                     buttonText: 'Suscribirse'
                                 }
                             ].map((plan, index) => (
-                                <motion.div
+                                <div
                                     key={plan.name}
-                                    initial={{ opacity: 0, y: 20 }}
-                                    whileInView={{ opacity: 1, y: 0 }}
-                                    viewport={{ once: true }}
-                                    transition={{ delay: index * 0.2 }}
-                                    className="flex flex-col p-8 rounded-3xl bg-white border-2 border-gray-200 hover:border-blue-600 hover:shadow-lg transition-all duration-300"
+                                    className="flex flex-col p-8 rounded-3xl bg-white border-2 border-gray-200 hover:border-blue-600 hover:shadow-lg transition-all duration-300 opacity-0 animate-fade-in-up"
+                                    style={{
+                                        animationDelay: `${index * 100}ms`,
+                                        animationFillMode: 'forwards'
+                                    }}
                                 >
                                     <h3 className="text-2xl font-bold text-gray-900">
                                         {plan.name}
@@ -520,7 +529,7 @@ export const LandingPage = () => {
                                             {plan.buttonText}
                                         </WaterButton>
                                     </div>
-                                </motion.div>
+                                </div>
                             ))}
                         </div>
                     </div>

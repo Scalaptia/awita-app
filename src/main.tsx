@@ -9,6 +9,7 @@ import App from './App.tsx'
 import { ThemeProvider } from './components/theme-provider.tsx'
 import Dashboard from './pages/dashboard.tsx'
 import Sensors from './pages/sensors.tsx'
+import NotFound from './pages/not-found.tsx'
 import { ProtectedRoute } from './components/protected-route.tsx'
 import { Toaster } from 'sonner'
 
@@ -218,6 +219,8 @@ createRoot(document.getElementById('root')!).render(
                                     />
                                 </Route>
                             </Route>
+                            {/* 404 page - outside protected routes */}
+                            <Route path="*" element={<NotFound />} />
                         </Routes>
                         <Toaster />
                     </ThemeProvider>
