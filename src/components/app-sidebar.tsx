@@ -53,7 +53,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <SidebarHeader>
                 <SidebarMenu>
                     <SidebarMenuItem>
-                        <Link to="/" className="flex items-center gap-2 p-2">
+                        <Link
+                            to="/"
+                            className="flex items-center gap-2 p-2 cursor-pointer"
+                        >
                             <img src="/logo_full_light.svg" alt="Logo" />
                         </Link>
                     </SidebarMenuItem>

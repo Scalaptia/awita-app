@@ -94,7 +94,7 @@ export function NotificationsDropdown() {
                             No hay notificaciones
                         </div>
                     ) : (
-                        notifications.slice(0, 4).map((notification) => (
+                        notifications.map((notification) => (
                             <DropdownMenuItem
                                 key={notification.id}
                                 className="flex flex-col items-start gap-1 px-4 py-2 cursor-pointer my-2 mx-1"

@@ -20,7 +20,7 @@ export const ContactModal = ({ isOpen, onClose }: ContactModalProps) => {
                 <button
                     type="button"
                     onClick={onClose}
-                    className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
+                    className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 cursor-pointer"
                 >
                     <X className="h-5 w-5" />
                 </button>
@@ -42,7 +42,7 @@ export const ContactModal = ({ isOpen, onClose }: ContactModalProps) => {
 
                     <a
                         href="mailto:fernando.haro.c@gmail.com"
-                        className="block text-blue-600 hover:text-blue-700 font-medium"
+                        className="block text-blue-600 hover:text-blue-700 font-medium cursor-pointer"
                     >
                         fernando.haro.c@gmail.com
                     </a>
